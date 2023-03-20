@@ -1,4 +1,3 @@
-import { Expose } from '@/application/providers/prisma/prisma.interface';
 import { PrismaService } from '@/application/providers/prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
 import { Prisma, User } from '@prisma/client';
@@ -8,15 +7,35 @@ import { UsersRepository } from '../users-repository';
 export class PrismaUsersRepository implements UsersRepository {
   constructor(private prisma: PrismaService) {}
 
-  async create(user: Prisma.UserCreateInput): Promise<Expose<User>> {
-    const data = await this.prisma.user.create({
+  async create(user: Prisma.UserCreateInput) {
+    const userCreated = await this.prisma.user.create({
       data: { ...user },
     });
 
-    return this.prisma.expose<User>(data);
+    return userCreated;
   }
 
-  async findAll(): Promise<Expose<User>[]> {
+  async findByEmail(email: string) {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        email,
+      },
+    });
+
+    return user;
+  }
+
+  async findById(id: string) {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    return user;
+  }
+
+  async findAll() {
     const data = await this.prisma.user.findMany({
       orderBy: { created_at: 'desc' },
     });
@@ -24,10 +43,7 @@ export class PrismaUsersRepository implements UsersRepository {
     return data.map((currentUser) => this.prisma.expose<User>(currentUser));
   }
 
-  async update(
-    userId: string,
-    user: Prisma.UserUpdateInput,
-  ): Promise<Expose<User>> {
+  async update(userId: string, user: Prisma.UserUpdateInput) {
     const data = await this.prisma.user.update({
       where: {
         id: userId,
@@ -35,6 +51,6 @@ export class PrismaUsersRepository implements UsersRepository {
       data: user,
     });
 
-    return await this.prisma.expose<User>(data);
+    return this.prisma.expose<User>(data);
   }
 }

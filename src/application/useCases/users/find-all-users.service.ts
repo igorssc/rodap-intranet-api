@@ -4,7 +4,7 @@ import { Injectable } from '@nestjs/common';
 import { User } from '@prisma/client';
 
 @Injectable()
-export class FindAllUserService {
+export class FindAllUsersService {
   constructor(private usersRepository: UsersRepository) {}
 
   async execute(): Promise<Expose<User>[]> {

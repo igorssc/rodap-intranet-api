@@ -1,26 +1,20 @@
 import { PrismaModule } from '@/application/providers/prisma/prisma.module';
-import { PrismaUsersRepository } from '@/application/repositories/implementations/prisma-users-repository';
+import { InMemoryUsersRepository } from '@/application/repositories/implementations/in-memory-users-repository';
 import { UsersRepository } from '@/application/repositories/users-repository';
 import { CreateUserService } from '@/application/useCases/users/create-user.service';
-import { FindAllUserService } from '@/application/useCases/users/find-all-user.service';
+import { FindAllUsersService } from '@/application/useCases/users/find-all-users.service';
 import { UpdateUserService } from '@/application/useCases/users/update-user.service';
 import { Module } from '@nestjs/common';
-import { CreateUserController } from '../controllers/users/create-user.controller';
-import { FindAllUserController } from '../controllers/users/find-all-user.controller';
-import { UpdateUserController } from '../controllers/users/update-user.controller';
+import { UsersController } from '../controllers/users.controller';
 
 @Module({
   imports: [PrismaModule],
-  controllers: [
-    CreateUserController,
-    FindAllUserController,
-    UpdateUserController,
-  ],
+  controllers: [UsersController],
   providers: [
     CreateUserService,
-    FindAllUserService,
+    FindAllUsersService,
     UpdateUserService,
-    { provide: UsersRepository, useClass: PrismaUsersRepository },
+    { provide: UsersRepository, useClass: InMemoryUsersRepository },
   ],
 })
 export class HttpModule {}
