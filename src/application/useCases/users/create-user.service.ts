@@ -1,6 +1,6 @@
-import { UserAlreadyExistsError } from '@/application/errors/user-already-exists-exception';
+import { USER_ALREADY_EXISTS } from '@/application/errors/errors.constants';
 import { UsersRepository } from '@/application/repositories/users-repository';
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { User } from '@prisma/client';
 import { hash } from 'bcryptjs';
 
@@ -28,7 +28,7 @@ export class CreateUserService {
     const userWithSameEmail = await this.usersRepository.findByEmail(email);
 
     if (userWithSameEmail) {
-      throw new UserAlreadyExistsError();
+      throw new ConflictException(USER_ALREADY_EXISTS);
     }
 
     const userCreated = await this.usersRepository.create({

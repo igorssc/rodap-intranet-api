@@ -1,4 +1,4 @@
-import { UserAlreadyExistsError } from '@/application/errors/user-already-exists-exception';
+import { UserAlreadyExistsError } from '@/application/errors/user-already-exists-error';
 import { InMemoryUsersRepository } from '@/application/repositories/implementations/in-memory-users-repository';
 import { UsersRepository } from '@/application/repositories/users-repository';
 import { Test, TestingModule } from '@nestjs/testing';

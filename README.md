@@ -12,4 +12,8 @@
 
 ## RNs (Regras de negócio)
 
+- [ ] Somente usuários com autorizações podem cadastrar novos usuários;
+- [ ] Não deve ser possível cadastrar dois usuários com e-mail semelhantes;
+- [ ] Não deve ser possível cadastrar dois usuários com CPF semelhantes;
+
 ## RNFs (Requisitos não funcionais)

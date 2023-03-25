@@ -10,9 +10,10 @@ import {
   Param,
   Post,
   Put,
+  UseGuards,
 } from '@nestjs/common';
-import { ApiResponse } from '@nestjs/swagger';
 import { UpdateUserDto } from '../dtos/users/update-user.dto';
+import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 
 @Controller('users')
 export class UsersController {
@@ -24,12 +25,11 @@ export class UsersController {
 
   @Post()
   @HttpCode(201)
-  @ApiResponse({ status: 201, description: 'User created successfully' })
-  @ApiResponse({ status: 400, description: 'Bad request' })
   async createUser(@Body() body: CreateUserDto): Promise<void> {
     await this.createUserService.execute(body);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get()
   async findAll() {
     return await this.findAllUserService.execute();
