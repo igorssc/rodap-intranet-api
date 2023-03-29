@@ -1,6 +1,6 @@
-import { UserAlreadyExistsError } from '@/application/errors/user-already-exists-error';
 import { InMemoryUsersRepository } from '@/application/repositories/implementations/in-memory-users-repository';
 import { UsersRepository } from '@/application/repositories/users-repository';
+import { ConflictException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { compare } from 'bcryptjs';
 import { CreateUserService } from './create-user.service';
@@ -10,7 +10,6 @@ describe('Create User Use Case', () => {
 
   beforeEach(async () => {
     const moduleRef: TestingModule = await Test.createTestingModule({
-      controllers: [],
       providers: [
         CreateUserService,
         { provide: UsersRepository, useClass: InMemoryUsersRepository },
@@ -61,6 +60,6 @@ describe('Create User Use Case', () => {
         email,
         password: '123456',
       }),
-    ).rejects.toBeInstanceOf(UserAlreadyExistsError);
+    ).rejects.toBeInstanceOf(ConflictException);
   });
 });

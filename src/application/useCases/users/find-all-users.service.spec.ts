@@ -2,7 +2,6 @@ import { InMemoryUsersRepository } from '@/application/repositories/implementati
 import { UsersRepository } from '@/application/repositories/users-repository';
 import { Test, TestingModule } from '@nestjs/testing';
 import { hash } from 'bcryptjs';
-import { CreateUserService } from './create-user.service';
 import { FindAllUsersService } from './find-all-users.service';
 
 describe('Find All Users Use Case', () => {
@@ -11,10 +10,8 @@ describe('Find All Users Use Case', () => {
 
   beforeEach(async () => {
     const moduleRef: TestingModule = await Test.createTestingModule({
-      controllers: [],
       providers: [
         FindAllUsersService,
-        CreateUserService,
         { provide: UsersRepository, useClass: InMemoryUsersRepository },
       ],
     }).compile();

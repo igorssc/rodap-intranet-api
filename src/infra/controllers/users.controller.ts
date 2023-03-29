@@ -60,6 +60,21 @@ export class UsersController {
     return await this.findAllUsersService.execute();
   }
 
+  @Get(':query')
+  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @CheckPolicies((ability: AppAbilityType) =>
+    ability.can(RolesAction.read, RolesSubject.USER),
+  )
+  async findUnique(@Param('query') query: string) {
+    const user = await this.findUniqueUserService.execute(query);
+
+    if (!user) {
+      throw new BadRequestException(USER_NOT_FOUND);
+    }
+
+    return user;
+  }
+
   @Get('me')
   @UseGuards(JwtAuthGuard)
   async findMe(@Req() req: any) {
@@ -94,6 +109,12 @@ export class UsersController {
       throw new ForbiddenException(INVALID_PERMISSION);
     }
 
+    if (body.is_admin) {
+      if (!req.user.is_admin) {
+        body.is_admin = undefined;
+      }
+    }
+
     return await this.updateUserService.execute(userId, body);
   }
 
@@ -122,6 +143,6 @@ export class UsersController {
       throw new ForbiddenException(INVALID_PERMISSION);
     }
 
-    return await this.deleteUniqueUserService.execute(userId);
+    await this.deleteUniqueUserService.execute(userId);
   }
 }

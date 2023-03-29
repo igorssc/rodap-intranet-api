@@ -1,6 +1,6 @@
 import { PrismaService } from '@/application/providers/prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
-import { Prisma, User } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 import { UsersRepository } from '../users-repository';
 
 @Injectable()
@@ -19,6 +19,9 @@ export class PrismaUsersRepository implements UsersRepository {
     const user = await this.prisma.user.findUnique({
       where: {
         email,
+      },
+      include: {
+        roles: true,
       },
     });
 
@@ -43,7 +46,7 @@ export class PrismaUsersRepository implements UsersRepository {
       orderBy: { created_at: 'desc' },
     });
 
-    return data.map((currentUser) => this.prisma.expose<User>(currentUser));
+    return data;
   }
 
   async update(userId: string, user: Prisma.UserUpdateInput) {
@@ -52,9 +55,12 @@ export class PrismaUsersRepository implements UsersRepository {
         id: userId,
       },
       data: user,
+      include: {
+        roles: true,
+      },
     });
 
-    return this.prisma.expose<User>(data);
+    return data;
   }
 
   async deleteUnique(userId: string) {

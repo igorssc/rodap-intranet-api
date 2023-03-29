@@ -1,13 +1,12 @@
-import { UserWithRoles } from '@/application/interfaces/user';
 import { Injectable } from '@nestjs/common';
-import { Prisma, User } from '@prisma/client';
+import { Prisma, Roles, User } from '@prisma/client';
 import { randomUUID } from 'node:crypto';
 import { UsersRepository } from '../users-repository';
 
 @Injectable()
 export class InMemoryUsersRepository implements UsersRepository {
-  deleteUnique: (userId: string) => Promise<User>;
   public items: User[] = [];
+  public roles: Roles[] = [];
 
   async create(data: Prisma.UserCreateInput) {
     const userCreated = {
@@ -16,8 +15,8 @@ export class InMemoryUsersRepository implements UsersRepository {
       email: data.email,
       password_hash: data.password_hash,
       created_at: new Date(),
-      is_admin: false,
-      is_active: true,
+      is_admin: data.is_admin ?? false,
+      is_active: data.is_active ?? true,
     };
 
     this.items.push(userCreated);
@@ -28,21 +27,25 @@ export class InMemoryUsersRepository implements UsersRepository {
   async findByEmail(email: string) {
     const user = this.items.find((item) => item.email === email);
 
+    const roles = this.roles.filter((role) => role.user_id === user.id);
+
     if (!user) {
       return null;
     }
 
-    return user;
+    return { ...user, roles };
   }
 
   async findById(id: string) {
     const user = this.items.find((item) => item.id === id);
 
+    const roles = this.roles.filter((role) => role.user_id === user.id);
+
     if (!user) {
       return null;
     }
 
-    return { ...user, password_hash: undefined } as UserWithRoles;
+    return { ...user, roles };
   }
 
   async findAll(page?: number) {
@@ -58,6 +61,22 @@ export class InMemoryUsersRepository implements UsersRepository {
 
     Object.assign(this.items[userIndex], user);
 
-    return { ...this.items[userIndex], password_hash: undefined };
+    const roles = this.roles.filter((role) => role.user_id === userId);
+
+    return { ...this.items[userIndex], roles };
+  }
+
+  async deleteUnique(userId: string) {
+    const userIndex = this.items.findIndex((item) => item.id === userId);
+
+    if (userIndex < 0) {
+      return null;
+    }
+
+    const userDeleted = { ...this.items[userIndex] };
+
+    this.items.splice(userIndex, 1);
+
+    return userDeleted;
   }
 }

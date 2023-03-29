@@ -1,26 +1,35 @@
 import { InMemoryUsersRepository } from '@/application/repositories/implementations/in-memory-users-repository';
 import { UsersRepository } from '@/application/repositories/users-repository';
+import { JwtModule } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
 import { hash } from 'bcryptjs';
-import { UpdateUserService } from './update-user.service';
+import { isJWT } from 'class-validator';
+import { jwtConstants } from './constants';
+import { LoginService } from './login.service';
 
-describe('Update User Use Case', () => {
+describe('Login Use Case', () => {
   let usersRepository: UsersRepository;
-  let sut: UpdateUserService;
+  let sut: LoginService;
 
   beforeEach(async () => {
     const moduleRef: TestingModule = await Test.createTestingModule({
+      imports: [
+        JwtModule.register({
+          secret: jwtConstants.secret,
+          signOptions: { expiresIn: '120s' },
+        }),
+      ],
       providers: [
-        UpdateUserService,
+        LoginService,
         { provide: UsersRepository, useClass: InMemoryUsersRepository },
       ],
     }).compile();
 
     usersRepository = moduleRef.get(UsersRepository);
-    sut = moduleRef.get(UpdateUserService);
+    sut = moduleRef.get(LoginService);
   });
 
-  it('should be able to update a user', async () => {
+  it('should be able to login', async () => {
     const password_hash = await hash('123456', 6);
 
     const userCreated = await usersRepository.create({
@@ -29,9 +38,9 @@ describe('Update User Use Case', () => {
       password_hash,
     });
 
-    const changedUser = await sut.execute(userCreated.id, { name: 'Peter' });
+    const login = await sut.execute(userCreated);
 
-    expect(changedUser.id).toEqual(userCreated.id);
-    expect(changedUser.name).toEqual('Peter');
+    expect(login.access_token).toEqual(expect.any(String));
+    expect(isJWT(login.access_token)).toEqual(true);
   });
 });

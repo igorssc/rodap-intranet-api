@@ -1,18 +1,14 @@
 import { Prisma, User } from '@prisma/client';
 import { UserWithRoles } from '../interfaces/user';
-import { Expose } from '../providers/prisma/prisma.interface';
 
 export abstract class UsersRepository {
   create: (user: Prisma.UserCreateInput) => Promise<User>;
 
-  findAll: (page?: number) => Promise<Expose<User>[]>;
+  findAll: (page?: number) => Promise<User[]>;
 
-  update: (
-    userId: string,
-    user: Prisma.UserUpdateInput,
-  ) => Promise<Expose<User>>;
+  update: (userId: string, user: Prisma.UserUpdateInput) => Promise<User>;
 
-  findByEmail: (email: string) => Promise<User | null>;
+  findByEmail: (email: string) => Promise<UserWithRoles | null>;
 
   findById: (id: string) => Promise<UserWithRoles | null>;
 

@@ -2,25 +2,25 @@ import { InMemoryUsersRepository } from '@/application/repositories/implementati
 import { UsersRepository } from '@/application/repositories/users-repository';
 import { Test, TestingModule } from '@nestjs/testing';
 import { hash } from 'bcryptjs';
-import { UpdateUserService } from './update-user.service';
+import { DeleteUniqueUserService } from './delete-unique-user.service';
 
-describe('Update User Use Case', () => {
+describe('Delete Unique User Use Case', () => {
   let usersRepository: UsersRepository;
-  let sut: UpdateUserService;
+  let sut: DeleteUniqueUserService;
 
   beforeEach(async () => {
     const moduleRef: TestingModule = await Test.createTestingModule({
       providers: [
-        UpdateUserService,
+        DeleteUniqueUserService,
         { provide: UsersRepository, useClass: InMemoryUsersRepository },
       ],
     }).compile();
 
     usersRepository = moduleRef.get(UsersRepository);
-    sut = moduleRef.get(UpdateUserService);
+    sut = moduleRef.get(DeleteUniqueUserService);
   });
 
-  it('should be able to update a user', async () => {
+  it('should be able to delete a user', async () => {
     const password_hash = await hash('123456', 6);
 
     const userCreated = await usersRepository.create({
@@ -29,9 +29,10 @@ describe('Update User Use Case', () => {
       password_hash,
     });
 
-    const changedUser = await sut.execute(userCreated.id, { name: 'Peter' });
+    const deletedUser = await sut.execute(userCreated.id);
 
-    expect(changedUser.id).toEqual(userCreated.id);
-    expect(changedUser.name).toEqual('Peter');
+    expect(deletedUser.id).toEqual(userCreated.id);
+    expect(deletedUser.name).toEqual('John Doe');
+    await expect(usersRepository.findAll()).resolves.toHaveLength(0);
   });
 });
