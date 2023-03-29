@@ -1,11 +1,20 @@
-import { Injectable } from '@nestjs/common';
+import {
+  INVALID_CREDENTIALS,
+  USER_IS_BLOCKED,
+} from '@/application/errors/errors.constants';
+import { FindUniqueUserService } from '@/application/useCases/users/find-unique-user.service';
+import {
+  ForbiddenException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { jwtConstants } from '../../application/useCases/auth/constants';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-  constructor() {
+  constructor(private findUniqueUserService: FindUniqueUserService) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
@@ -14,6 +23,16 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload: { sub: string }) {
-    return { userId: payload.sub };
+    const user = await this.findUniqueUserService.execute(payload.sub);
+
+    if (!user) {
+      throw new UnauthorizedException(INVALID_CREDENTIALS);
+    }
+
+    if (!user.is_active) {
+      throw new ForbiddenException(USER_IS_BLOCKED);
+    }
+
+    return user;
   }
 }

@@ -1,9 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { User } from '@prisma/client';
 
-interface LoginUseCaseProps {
-  userId: string;
-}
+type LoginUseCaseProps = User;
 
 interface LoginUseCaseResponse {
   access_token: string;
@@ -13,8 +12,8 @@ interface LoginUseCaseResponse {
 export class LoginService {
   constructor(private jwtService: JwtService) {}
 
-  async execute({ userId }: LoginUseCaseProps): Promise<LoginUseCaseResponse> {
-    const payload = { sub: userId };
+  async execute(user: LoginUseCaseProps): Promise<LoginUseCaseResponse> {
+    const payload = { sub: user.id };
     return {
       access_token: this.jwtService.sign(payload),
     };

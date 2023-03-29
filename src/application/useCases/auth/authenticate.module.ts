@@ -10,7 +10,7 @@ import { ValidateUserService } from './validate-user.service';
     UsersModule,
     JwtModule.register({
       secret: jwtConstants.secret,
-      signOptions: { expiresIn: '60s' },
+      signOptions: { expiresIn: '60000s' },
     }),
   ],
   providers: [ValidateUserService, LoginService],

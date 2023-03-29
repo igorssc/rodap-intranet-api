@@ -1,4 +1,5 @@
 import { Prisma, User } from '@prisma/client';
+import { UserWithRoles } from '../interfaces/user';
 import { Expose } from '../providers/prisma/prisma.interface';
 
 export abstract class UsersRepository {
@@ -13,5 +14,7 @@ export abstract class UsersRepository {
 
   findByEmail: (email: string) => Promise<User | null>;
 
-  findById: (id: string) => Promise<User | null>;
+  findById: (id: string) => Promise<UserWithRoles | null>;
+
+  deleteUnique: (userId: string) => Promise<User>;
 }

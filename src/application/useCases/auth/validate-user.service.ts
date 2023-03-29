@@ -1,6 +1,10 @@
 import { INVALID_CREDENTIALS } from '@/application/errors/errors.constants';
 import { UsersRepository } from '@/application/repositories/users-repository';
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { User } from '@prisma/client';
 import { compare } from 'bcryptjs';
 
@@ -27,14 +31,16 @@ export class ValidateUserService {
       throw new BadRequestException(INVALID_CREDENTIALS);
     }
 
+    if (!user.is_active) {
+      throw new UnauthorizedException();
+    }
+
     const doesPasswordMatches = await compare(password, user.password_hash);
 
     if (!doesPasswordMatches) {
       throw new BadRequestException(INVALID_CREDENTIALS);
     }
 
-    return {
-      user,
-    };
+    return { user };
   }
 }

@@ -11,8 +11,8 @@ export class AuthenticateController {
   constructor(private loginService: LoginService) {}
 
   @HttpCode(200)
-  @UseGuards(LocalAuthGuard)
   @Post('login')
+  @UseGuards(LocalAuthGuard)
   async login(@Request() req: any): Promise<LoginResponse> {
     return this.loginService.execute(req.user);
   }

@@ -1,3 +1,4 @@
+import { UserWithRoles } from '@/application/interfaces/user';
 import { Injectable } from '@nestjs/common';
 import { Prisma, User } from '@prisma/client';
 import { randomUUID } from 'node:crypto';
@@ -5,6 +6,7 @@ import { UsersRepository } from '../users-repository';
 
 @Injectable()
 export class InMemoryUsersRepository implements UsersRepository {
+  deleteUnique: (userId: string) => Promise<User>;
   public items: User[] = [];
 
   async create(data: Prisma.UserCreateInput) {
@@ -14,6 +16,8 @@ export class InMemoryUsersRepository implements UsersRepository {
       email: data.email,
       password_hash: data.password_hash,
       created_at: new Date(),
+      is_admin: false,
+      is_active: true,
     };
 
     this.items.push(userCreated);
@@ -38,7 +42,7 @@ export class InMemoryUsersRepository implements UsersRepository {
       return null;
     }
 
-    return { ...user, password_hash: undefined };
+    return { ...user, password_hash: undefined } as UserWithRoles;
   }
 
   async findAll(page?: number) {

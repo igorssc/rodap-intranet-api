@@ -30,6 +30,9 @@ export class PrismaUsersRepository implements UsersRepository {
       where: {
         id,
       },
+      include: {
+        roles: true,
+      },
     });
 
     return user;
@@ -52,5 +55,9 @@ export class PrismaUsersRepository implements UsersRepository {
     });
 
     return this.prisma.expose<User>(data);
+  }
+
+  async deleteUnique(userId: string) {
+    return await this.prisma.user.delete({ where: { id: userId } });
   }
 }

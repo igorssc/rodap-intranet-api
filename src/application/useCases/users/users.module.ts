@@ -1,8 +1,11 @@
-import { InMemoryUsersRepository } from '@/application/repositories/implementations/in-memory-users-repository';
+import { PrismaService } from '@/application/providers/prisma/prisma.service';
+import { PrismaUsersRepository } from '@/application/repositories/implementations/prisma-users-repository';
 import { UsersRepository } from '@/application/repositories/users-repository';
 import { Module } from '@nestjs/common';
 import { CreateUserService } from './create-user.service';
+import { DeleteUniqueUserService } from './delete-unique-user.service';
 import { FindAllUsersService } from './find-all-users.service';
+import { FindUniqueUserService } from './find-unique-user.service';
 import { UpdateUserService } from './update-user.service';
 
 @Module({
@@ -11,13 +14,18 @@ import { UpdateUserService } from './update-user.service';
     CreateUserService,
     FindAllUsersService,
     UpdateUserService,
-    { provide: UsersRepository, useClass: InMemoryUsersRepository },
+    PrismaService,
+    FindUniqueUserService,
+    DeleteUniqueUserService,
+    { provide: UsersRepository, useClass: PrismaUsersRepository },
   ],
   exports: [
     CreateUserService,
     FindAllUsersService,
     UpdateUserService,
     UsersRepository,
+    FindUniqueUserService,
+    DeleteUniqueUserService,
   ],
 })
 export class UsersModule {}

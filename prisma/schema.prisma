@@ -15,7 +15,33 @@ model User {
   name          String
   email         String   @unique
   password_hash String
+  is_admin      Boolean  @default(false)
+  is_active     Boolean  @default(true)
   created_at    DateTime @default(now())
+  roles         Roles[]
 
   @@map("users")
+}
+
+enum RolesSubject {
+  USER
+}
+
+enum RolesAction {
+  manage
+  create
+  read
+  update
+  delete
+}
+
+model Roles {
+  id      String       @id @default(uuid())
+  subject RolesSubject
+  action  RolesAction
+
+  User    User   @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user_id String
+
+  @@map("roles")
 }
