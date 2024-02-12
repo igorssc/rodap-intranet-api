@@ -1,21 +1,70 @@
 version: '3'
+
+networks:
+  app_tier:
+    driver: bridge
+
 services:
+  prisma_postgres:
+    container_name: rodap_postgres
+    image: bitnami/postgresql
+    restart: on-failure
+    ports:
+      - ${POSTGRES_PORT}:5432
+    volumes:
+      - prisma_postgres:/var/lib/postgresql/data
+    env_file:
+      - .env
+    environment:
+      - POSTGRESQL_USERNAME=${POSTGRES_USERNAME}
+      - POSTGRESQL_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRESQL_DATABASE=${POSTGRES_DATABASE}
+    networks:
+      - app_tier
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USERNAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   app:
-    container_name: api
+    container_name: rodap_api
+    restart: on-failure
     build:
       context: .
       dockerfile: Dockerfile.dev
     ports:
-      - '8089:3000'
+      - ${APP_PORT}:3000
+    command: ash -c "npx prisma migrate dev && npm run start:dev"
+    networks:
+      - app_tier
+    healthcheck:
+      test: ["CMD-SHELL", "nc -z localhost 3000"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - .:/app
+      - /app/node_modules
     depends_on:
-      - api-rodap-pg
+      prisma_postgres:
+        condition: service_healthy
 
-  api-rodap-pg:
-    container_name: prisma
-    image: bitnami/postgresql
+  prisma_studio:
+    container_name: rodap_studio
+    image: timothyjmiller/prisma-studio
+    restart: on-failure
     ports:
-      - 5432:5432
-    environment:
-      - POSTGRESQL_USERNAME=docker
-      - POSTGRESQL_PASSWORD=docker
-      - POSTGRESQL_DATABASE=apirodap
+      - ${PRISMA_STUDIO_PORT}:5555
+    env_file:
+      - .env
+    networks:
+      - app_tier
+    depends_on:
+      prisma_postgres:
+        condition: service_healthy
+      app:
+        condition: service_healthy
+
+volumes:
+  prisma_postgres:

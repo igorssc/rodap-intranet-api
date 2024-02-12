@@ -1,15 +1,17 @@
 FROM node:18-alpine
 
+RUN npm install -g pnpm
+
 WORKDIR /app
 
-COPY package*.json ./
+COPY package.json ./
+
+RUN pnpm install --production
 
 COPY . .
 
-RUN npm install --production
-
-RUN npm run build
+RUN pnpm build
 
 EXPOSE 3000
 
-CMD ["npm", "run", "start:prod"]
+CMD ["pnpm", "start:prod"]
