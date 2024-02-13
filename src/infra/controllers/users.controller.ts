@@ -25,10 +25,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { RolesAction, RolesSubject } from '@prisma/client';
-import {
-  AppAbilityType,
-  CaslAbilityFactory,
-} from '../casl/casl-ability.factory';
+import { CaslAbilityFactory } from '../casl/casl-ability.factory';
 import { CheckPolicies } from '../decorators/check-guard.decorator';
 import { UpdateUserDto } from '../dtos/users/update-user.dto';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
@@ -61,9 +58,7 @@ export class UsersController {
 
   @Get(':query')
   @UseGuards(JwtAuthGuard, PoliciesGuard)
-  @CheckPolicies((ability: AppAbilityType) =>
-    ability.can(RolesAction.read, RolesSubject.USER),
-  )
+  @CheckPolicies(RolesAction.read, RolesSubject.USER)
   async findUnique(@Param('query') query: string) {
     const user = await this.findUniqueUserService.execute(query);
 
@@ -76,9 +71,7 @@ export class UsersController {
 
   @Get()
   @UseGuards(JwtAuthGuard, PoliciesGuard)
-  @CheckPolicies((ability: AppAbilityType) =>
-    ability.can(RolesAction.read, RolesSubject.USER),
-  )
+  @CheckPolicies(RolesAction.read, RolesSubject.USER)
   async findAll() {
     return await this.findAllUsersService.execute();
   }
@@ -90,8 +83,11 @@ export class UsersController {
     @Body() body: UpdateUserDto,
     @Req() req: any,
   ) {
+    const { user } = req;
+    const { is_admin } = body;
+
     const ability = this.caslAbilityFactory.createForUser(
-      subject(RolesSubject.USER, req.user as UserWithRoles),
+      subject(RolesSubject.USER, user as UserWithRoles),
     );
 
     const userToBeChanged = await this.findUniqueUserService.execute(userId);
@@ -105,11 +101,11 @@ export class UsersController {
       subject(RolesSubject.USER, userToBeChanged as UserWithRoles),
     );
 
-    if (!isAllowed) {
+    if (!isAllowed && user.id !== userToBeChanged.id) {
       throw new ForbiddenException(INVALID_PERMISSION);
     }
 
-    if (body.is_admin && !req.user.is_admin) {
+    if (is_admin && !user.is_admin) {
       body.is_admin = undefined;
     }
 
@@ -118,12 +114,12 @@ export class UsersController {
 
   @Delete(':userId')
   @UseGuards(JwtAuthGuard, PoliciesGuard)
-  @CheckPolicies((ability: AppAbilityType) =>
-    ability.can(RolesAction.delete, RolesSubject.USER),
-  )
+  @CheckPolicies(RolesAction.delete, RolesSubject.USER)
   async deleteUnique(@Param('userId') userId: string, @Req() req: any) {
+    const { user } = req;
+
     const ability = this.caslAbilityFactory.createForUser(
-      subject(RolesSubject.USER, req.user as UserWithRoles),
+      subject(RolesSubject.USER, user as UserWithRoles),
     );
 
     const userToBeDeleted = await this.findUniqueUserService.execute(userId);
@@ -137,7 +133,7 @@ export class UsersController {
       subject(RolesSubject.USER, userToBeDeleted as UserWithRoles),
     );
 
-    if (!isAllowed) {
+    if (!isAllowed || user.id === userToBeDeleted.id) {
       throw new ForbiddenException(INVALID_PERMISSION);
     }
 
