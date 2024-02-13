@@ -3,6 +3,7 @@ import { UsersRepository } from '@/application/repositories/users-repository';
 import { Test, TestingModule } from '@nestjs/testing';
 import { hash } from 'bcryptjs';
 import { UpdateUserService } from './update-user.service';
+import { beforeEach, describe, expect, it } from 'vitest';
 
 describe('Update User Use Case', () => {
   let usersRepository: UsersRepository;

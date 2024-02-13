@@ -4,6 +4,7 @@ import { ConflictException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { compare } from 'bcryptjs';
 import { CreateUserService } from './create-user.service';
+import { beforeEach, describe, expect, it } from 'vitest';
 
 describe('Create User Use Case', () => {
   let sut: CreateUserService;
