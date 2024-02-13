@@ -46,6 +46,8 @@ export class UsersController {
 
   @Post()
   @HttpCode(201)
+  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @CheckPolicies(RolesAction.create, RolesSubject.USER)
   async createUser(@Body() body: CreateUserDto) {
     const { user } = await this.createUserService.execute(body);
 
