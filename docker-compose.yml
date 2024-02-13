@@ -35,6 +35,10 @@ services:
       dockerfile: Dockerfile.dev
     ports:
       - ${APP_PORT}:3000
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_URL=postgresql://${POSTGRES_USERNAME}:${POSTGRES_PASSWORD}@rodap_postgres:${POSTGRES_PORT}/${POSTGRES_DATABASE}
     command: ash -c "npx prisma migrate dev && npm run start:dev"
     networks:
       - app_tier
@@ -58,6 +62,8 @@ services:
       - ${PRISMA_STUDIO_PORT}:5555
     env_file:
       - .env
+    environment:
+      - POSTGRES_URL=postgresql://${POSTGRES_USERNAME}:${POSTGRES_PASSWORD}@rodap_postgres:${POSTGRES_PORT}/${POSTGRES_DATABASE}
     networks:
       - app_tier
     depends_on:

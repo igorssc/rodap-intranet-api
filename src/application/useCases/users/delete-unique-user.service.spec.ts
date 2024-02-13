@@ -33,6 +33,9 @@ describe('Delete Unique User Use Case', () => {
 
     expect(deletedUser.id).toEqual(userCreated.id);
     expect(deletedUser.name).toEqual('John Doe');
-    await expect(usersRepository.findAll()).resolves.toHaveLength(0);
+
+    const listUsers = await usersRepository.findAll({ page: 1, pageSize: 10 });
+
+    await expect(listUsers.length).toBe(0);
   });
 });

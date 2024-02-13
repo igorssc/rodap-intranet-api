@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { Prisma, Roles, User } from '@prisma/client';
+import { Prisma, Role, User } from '@prisma/client';
 import { randomUUID } from 'node:crypto';
-import { UsersRepository } from '../users-repository';
+import { FindAllUsersProps, UsersRepository } from '../users-repository';
 
 @Injectable()
 export class InMemoryUsersRepository implements UsersRepository {
   public items: User[] = [];
-  public roles: Roles[] = [];
+  public roles: Role[] = [];
 
   async create(data: Prisma.UserCreateInput) {
     const userCreated = {
@@ -48,8 +48,23 @@ export class InMemoryUsersRepository implements UsersRepository {
     return { ...user, roles };
   }
 
-  async findAll(page?: number) {
-    return this.items.slice(((page ?? 1) - 1) * 20, (page ?? 1) * 20);
+  async totalCount() {
+    return this.items.length;
+  }
+
+  async findAll({ page, pageSize, hiddenId }: FindAllUsersProps) {
+    let filteredItems = this.items;
+
+    if (hiddenId) {
+      filteredItems = filteredItems.filter((item) => item.id !== hiddenId);
+    }
+
+    const start = (page - 1) * pageSize;
+    const end = start + pageSize;
+
+    const data = filteredItems.slice(start, end);
+
+    return data;
   }
 
   async update(userId: string, user: Prisma.UserUpdateInput) {

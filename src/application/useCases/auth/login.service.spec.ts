@@ -41,6 +41,7 @@ describe('Login Use Case', () => {
     const login = await sut.execute(userCreated);
 
     expect(login.access_token).toEqual(expect.any(String));
+
     expect(isJWT(login.access_token)).toEqual(true);
   });
 });

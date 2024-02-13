@@ -21,6 +21,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
   Req,
   UseGuards,
 } from '@nestjs/common';
@@ -30,6 +31,7 @@ import { CheckPolicies } from '../decorators/check-guard.decorator';
 import { UpdateUserDto } from '../dtos/users/update-user.dto';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 import { PoliciesGuard } from '../guards/policies.guard';
+import { FindAllUsersDto } from '../dtos/users/find-all-users.dto';
 
 @Controller('users')
 export class UsersController {
@@ -45,7 +47,9 @@ export class UsersController {
   @Post()
   @HttpCode(201)
   async createUser(@Body() body: CreateUserDto) {
-    await this.createUserService.execute(body);
+    const { user } = await this.createUserService.execute(body);
+
+    return user;
   }
 
   @Get('me')
@@ -72,8 +76,16 @@ export class UsersController {
   @Get()
   @UseGuards(JwtAuthGuard, PoliciesGuard)
   @CheckPolicies(RolesAction.read, RolesSubject.USER)
-  async findAll() {
-    return await this.findAllUsersService.execute();
+  async findAll(@Req() req: any, @Query() query: FindAllUsersDto) {
+    const { page, limit } = query;
+
+    const { user } = req;
+
+    return await this.findAllUsersService.execute({
+      page,
+      limit,
+      hiddenId: user.id,
+    });
   }
 
   @Put(':userId')

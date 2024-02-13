@@ -11,14 +11,15 @@ datasource db {
 }
 
 model User {
-  id            String   @id @default(uuid())
+  id            String      @id @default(uuid())
   name          String
-  email         String   @unique
+  email         String      @unique
   password_hash String
-  is_admin      Boolean  @default(false)
-  is_active     Boolean  @default(true)
-  created_at    DateTime @default(now())
-  roles         Roles[]
+  is_admin      Boolean     @default(false)
+  is_active     Boolean     @default(true)
+  created_at    DateTime    @default(now())
+  roles         Role[]
+  ActionLog     ActionLog[]
 
   @@map("users")
 }
@@ -35,13 +36,33 @@ enum RolesAction {
   delete
 }
 
-model Roles {
-  id      String       @id @default(uuid())
-  subject RolesSubject
-  action  RolesAction
+model Role {
+  id         String       @id @default(uuid())
+  subject    RolesSubject
+  action     RolesAction
+  created_at DateTime     @default(now())
 
   User    User   @relation(fields: [user_id], references: [id], onDelete: Cascade)
   user_id String
 
   @@map("roles")
+}
+
+enum ActionLogType {
+  LOGIN
+  CREATE_USER
+  UPDATE_USER
+  DELETE_USER
+}
+
+model ActionLog {
+  id         String        @id @default(uuid())
+  actionType ActionLogType
+  actionData Json
+  created_at DateTime      @default(now())
+
+  User    User   @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user_id String
+
+  @@map("action_logs")
 }
