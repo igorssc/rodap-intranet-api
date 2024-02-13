@@ -1,14 +1,9 @@
 import { USER_ALREADY_EXISTS } from '@/application/errors/errors.constants';
 import { UsersRepository } from '@/application/repositories/users-repository';
+import { CreateUserDto } from '@/infra/dtos/users/create-user.dto';
 import { ConflictException, Injectable } from '@nestjs/common';
 import { User } from '@prisma/client';
 import { hash } from 'bcryptjs';
-
-interface CreateUserUseCaseProps {
-  name: string;
-  email: string;
-  password: string;
-}
 
 interface CreateUserUseCaseResponse {
   user: User;
@@ -22,7 +17,7 @@ export class CreateUserService {
     name,
     email,
     password,
-  }: CreateUserUseCaseProps): Promise<CreateUserUseCaseResponse> {
+  }: CreateUserDto): Promise<CreateUserUseCaseResponse> {
     const password_hash = await hash(password, 6);
 
     const userWithSameEmail = await this.usersRepository.findByEmail(email);

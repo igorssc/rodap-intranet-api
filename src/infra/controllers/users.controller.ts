@@ -47,17 +47,16 @@ export class UsersController {
 
   @Post()
   @HttpCode(201)
-  async createUser(@Body() body: CreateUserDto): Promise<void> {
+  async createUser(@Body() body: CreateUserDto) {
     await this.createUserService.execute(body);
   }
 
-  @Get()
-  @UseGuards(JwtAuthGuard, PoliciesGuard)
-  @CheckPolicies((ability: AppAbilityType) =>
-    ability.can(RolesAction.read, RolesSubject.USER),
-  )
-  async findAll() {
-    return await this.findAllUsersService.execute();
+  @Get('me')
+  @UseGuards(JwtAuthGuard)
+  async findMe(@Req() req: any) {
+    const { user } = req;
+
+    return user;
   }
 
   @Get(':query')
@@ -75,12 +74,13 @@ export class UsersController {
     return user;
   }
 
-  @Get('me')
-  @UseGuards(JwtAuthGuard)
-  async findMe(@Req() req: any) {
-    const { user } = req;
-
-    return user;
+  @Get()
+  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @CheckPolicies((ability: AppAbilityType) =>
+    ability.can(RolesAction.read, RolesSubject.USER),
+  )
+  async findAll() {
+    return await this.findAllUsersService.execute();
   }
 
   @Put(':userId')
@@ -109,10 +109,8 @@ export class UsersController {
       throw new ForbiddenException(INVALID_PERMISSION);
     }
 
-    if (body.is_admin) {
-      if (!req.user.is_admin) {
-        body.is_admin = undefined;
-      }
+    if (body.is_admin && !req.user.is_admin) {
+      body.is_admin = undefined;
     }
 
     return await this.updateUserService.execute(userId, body);

@@ -33,6 +33,7 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
     if (!user.is_active) {
       throw new ForbiddenException(USER_IS_BLOCKED);
     }
+
     return user;
   }
 }
