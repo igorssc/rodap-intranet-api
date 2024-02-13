@@ -6,6 +6,7 @@ import { hash } from 'bcryptjs';
 import { isJWT } from 'class-validator';
 import { jwtConstants } from './constants';
 import { LoginService } from './login.service';
+import { beforeEach, describe, expect, it } from 'vitest';
 
 describe('Login Use Case', () => {
   let usersRepository: UsersRepository;

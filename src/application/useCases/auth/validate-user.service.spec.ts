@@ -4,6 +4,7 @@ import { BadRequestException, UnauthorizedException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { hash } from 'bcryptjs';
 import { ValidateUserService } from './validate-user.service';
+import { beforeEach, describe, expect, it } from 'vitest';
 
 describe('Validate User Use Case', () => {
   let usersRepository: UsersRepository;

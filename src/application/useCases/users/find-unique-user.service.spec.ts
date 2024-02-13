@@ -3,6 +3,7 @@ import { UsersRepository } from '@/application/repositories/users-repository';
 import { Test, TestingModule } from '@nestjs/testing';
 import { hash } from 'bcryptjs';
 import { FindUniqueUserService } from './find-unique-user.service';
+import { beforeEach, describe, expect, it } from 'vitest';
 
 describe('Find Unique User Use Case', () => {
   let usersRepository: UsersRepository;
