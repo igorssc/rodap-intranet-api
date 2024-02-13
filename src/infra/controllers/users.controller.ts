@@ -22,16 +22,16 @@ import {
   Post,
   Put,
   Query,
-  Req,
   UseGuards,
 } from '@nestjs/common';
-import { RolesAction, RolesSubject } from '@prisma/client';
+import { RolesAction, RolesSubject, User as UserProps } from '@prisma/client';
 import { CaslAbilityFactory } from '../casl/casl-ability.factory';
 import { CheckPolicies } from '../decorators/check-guard.decorator';
 import { UpdateUserDto } from '../dtos/users/update-user.dto';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 import { PoliciesGuard } from '../guards/policies.guard';
 import { FindAllUsersDto } from '../dtos/users/find-all-users.dto';
+import { User } from '../decorators/user.decorator';
 
 @Controller('users')
 export class UsersController {
@@ -56,9 +56,7 @@ export class UsersController {
 
   @Get('me')
   @UseGuards(JwtAuthGuard)
-  async findMe(@Req() req: any) {
-    const { user } = req;
-
+  async findMe(@User() user: UserProps) {
     return user;
   }
 
@@ -78,10 +76,8 @@ export class UsersController {
   @Get()
   @UseGuards(JwtAuthGuard, PoliciesGuard)
   @CheckPolicies(RolesAction.read, RolesSubject.USER)
-  async findAll(@Req() req: any, @Query() query: FindAllUsersDto) {
+  async findAll(@User() user: UserProps, @Query() query: FindAllUsersDto) {
     const { page, limit } = query;
-
-    const { user } = req;
 
     return await this.findAllUsersService.execute({
       page,
@@ -95,9 +91,8 @@ export class UsersController {
   async update(
     @Param('userId') userId: string,
     @Body() body: UpdateUserDto,
-    @Req() req: any,
+    @User() user: UserProps,
   ) {
-    const { user } = req;
     const { is_admin } = body;
 
     const ability = this.caslAbilityFactory.createForUser(
@@ -129,9 +124,7 @@ export class UsersController {
   @Delete(':userId')
   @UseGuards(JwtAuthGuard, PoliciesGuard)
   @CheckPolicies(RolesAction.delete, RolesSubject.USER)
-  async deleteUnique(@Param('userId') userId: string, @Req() req: any) {
-    const { user } = req;
-
+  async deleteUnique(@Param('userId') userId: string, @User() user: UserProps) {
     const ability = this.caslAbilityFactory.createForUser(
       subject(RolesSubject.USER, user as UserWithRoles),
     );
