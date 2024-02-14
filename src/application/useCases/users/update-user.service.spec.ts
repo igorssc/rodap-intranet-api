@@ -4,6 +4,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { hash } from 'bcryptjs';
 import { UpdateUserService } from './update-user.service';
 import { beforeEach, describe, expect, it } from 'vitest';
+import { PrismaService } from '@/application/providers/prisma/prisma.service';
 
 describe('Update User Use Case', () => {
   let usersRepository: UsersRepository;
@@ -13,6 +14,7 @@ describe('Update User Use Case', () => {
     const moduleRef: TestingModule = await Test.createTestingModule({
       providers: [
         UpdateUserService,
+        PrismaService,
         { provide: UsersRepository, useClass: InMemoryUsersRepository },
       ],
     }).compile();
@@ -30,9 +32,12 @@ describe('Update User Use Case', () => {
       password_hash,
     });
 
-    const changedUser = await sut.execute(userCreated.id, { name: 'Peter' });
+    const userChanged = await sut.execute(userCreated.id, { name: 'Peter' });
 
-    expect(changedUser.id).toEqual(userCreated.id);
-    expect(changedUser.name).toEqual('Peter');
+    expect(userChanged.id).toEqual(userCreated.id);
+
+    expect(userChanged.name).toEqual('Peter');
+
+    expect(userChanged).not.toHaveProperty('password_hash');
   });
 });
