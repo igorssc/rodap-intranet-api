@@ -16,7 +16,6 @@ export class AuthenticateController {
   @Post()
   @UseGuards(LocalAuthGuard)
   async login(@User() user: UserProps): Promise<LoginResponse> {
-    console.log(user);
     return this.loginService.execute(user);
   }
 }

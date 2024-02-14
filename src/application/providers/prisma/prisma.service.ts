@@ -16,7 +16,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
 
   expose<T>(item: T): Expose<T> {
     if (!item) return {} as T;
-    delete (item as any as Partial<User>).password_hash;
+    delete (item as Partial<User>).password_hash;
     return item;
   }
 }

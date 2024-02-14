@@ -32,11 +32,13 @@ import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 import { PoliciesGuard } from '../guards/policies.guard';
 import { FindAllUsersDto } from '../dtos/users/find-all-users.dto';
 import { User } from '../decorators/user.decorator';
+import { FindMeService } from '@/application/useCases/users/find-me.service';
 
 @Controller('users')
 export class UsersController {
   constructor(
     private createUserService: CreateUserService,
+    private findMeService: FindMeService,
     private findAllUsersService: FindAllUsersService,
     private findUniqueUserService: FindUniqueUserService,
     private updateUserService: UpdateUserService,
@@ -49,15 +51,13 @@ export class UsersController {
   @UseGuards(JwtAuthGuard, PoliciesGuard)
   @CheckPolicies(RolesAction.create, RolesSubject.USER)
   async createUser(@Body() body: CreateUserDto) {
-    const { user } = await this.createUserService.execute(body);
-
-    return user;
+    await this.createUserService.execute(body);
   }
 
   @Get('me')
   @UseGuards(JwtAuthGuard)
   async findMe(@User() user: UserProps) {
-    return user;
+    return this.findMeService.execute(user);
   }
 
   @Get(':query')

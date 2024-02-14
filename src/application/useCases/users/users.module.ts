@@ -7,6 +7,7 @@ import { DeleteUniqueUserService } from './delete-unique-user.service';
 import { FindAllUsersService } from './find-all-users.service';
 import { FindUniqueUserService } from './find-unique-user.service';
 import { UpdateUserService } from './update-user.service';
+import { FindMeService } from './find-me.service';
 
 @Module({
   imports: [],
@@ -17,6 +18,7 @@ import { UpdateUserService } from './update-user.service';
     PrismaService,
     FindUniqueUserService,
     DeleteUniqueUserService,
+    FindMeService,
     { provide: UsersRepository, useClass: PrismaUsersRepository },
   ],
   exports: [
@@ -26,6 +28,7 @@ import { UpdateUserService } from './update-user.service';
     UsersRepository,
     FindUniqueUserService,
     DeleteUniqueUserService,
+    FindMeService,
   ],
 })
 export class UsersModule {}

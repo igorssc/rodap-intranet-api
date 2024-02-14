@@ -1,5 +1,6 @@
 import { PaginatedData } from '@/application/interfaces/pagination';
 import { Expose } from '@/application/providers/prisma/prisma.interface';
+import { PrismaService } from '@/application/providers/prisma/prisma.service';
 import { UsersRepository } from '@/application/repositories/users-repository';
 import { pagination } from '@/application/utils/pagination';
 import { Injectable } from '@nestjs/common';
@@ -13,7 +14,10 @@ interface FindAllUsersServiceExecuteProps {
 
 @Injectable()
 export class FindAllUsersService {
-  constructor(private usersRepository: UsersRepository) {}
+  constructor(
+    private usersRepository: UsersRepository,
+    private prismaService: PrismaService,
+  ) {}
 
   async execute({
     page = 1,
@@ -28,11 +32,13 @@ export class FindAllUsersService {
       hiddenId,
     });
 
+    const dataExposed = data.map((item) => this.prismaService.expose(item));
+
     const totalCount =
       (await this.usersRepository.totalCount()) - (hiddenId ? 1 : 0);
 
     const dataPaginated = pagination({
-      data,
+      data: dataExposed,
       page,
       pageSize: limit,
       totalCount,

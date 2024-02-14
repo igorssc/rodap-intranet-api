@@ -4,6 +4,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { hash } from 'bcryptjs';
 import { FindAllUsersService } from './find-all-users.service';
 import { beforeEach, describe, expect, it } from 'vitest';
+import { PrismaService } from '@/application/providers/prisma/prisma.service';
 
 describe('Find All Users Use Case', () => {
   let usersRepository: UsersRepository;
@@ -13,6 +14,7 @@ describe('Find All Users Use Case', () => {
     const moduleRef: TestingModule = await Test.createTestingModule({
       providers: [
         FindAllUsersService,
+        PrismaService,
         { provide: UsersRepository, useClass: InMemoryUsersRepository },
       ],
     }).compile();
@@ -126,5 +128,22 @@ describe('Find All Users Use Case', () => {
 
     expect(usersList.data).toHaveLength(1);
     expect(usersList.data[0].name).toBe('Alice Smith');
+  });
+
+  it('should not be able to return all users with the password', async () => {
+    const password_hash = await hash('123456', 6);
+
+    await usersRepository.create({
+      name: 'John Doe',
+      email: 'johndoe@example.com',
+      password_hash,
+    });
+
+    const usersList = await sut.execute();
+
+    expect(usersList.data).toHaveLength(1);
+    expect(usersList.data[0].name).toBe('John Doe');
+
+    expect(usersList.data[0]).not.toHaveProperty('password_hash');
   });
 });
