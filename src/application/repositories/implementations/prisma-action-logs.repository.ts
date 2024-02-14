@@ -27,9 +27,14 @@ export class PrismaActionLogsRepository implements ActionLogsRepository {
     return await this.prisma.actionLog.count({ where: { user_id: userId } });
   }
 
-  async findAll({ page, pageSize }: FindAllProps) {
+  async findAll({ page, pageSize, hiddenId }: FindAllProps) {
     const data = await this.prisma.actionLog.findMany({
       orderBy: { created_at: 'desc' },
+      where: {
+        NOT: {
+          user_id: hiddenId,
+        },
+      },
       skip: (page - 1) * pageSize,
       take: pageSize,
     });

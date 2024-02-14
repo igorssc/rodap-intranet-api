@@ -32,7 +32,7 @@ describe('Find Unique User Use Case', () => {
       password_hash,
     });
 
-    const user = await sut.execute(userCreated.id);
+    const { user } = await sut.execute(userCreated.id);
 
     expect(user).toHaveProperty('name');
     expect(user).toHaveProperty('email');
@@ -50,7 +50,7 @@ describe('Find Unique User Use Case', () => {
       password_hash,
     });
 
-    const user = await sut.execute('johndoe@example.com');
+    const { user } = await sut.execute('johndoe@example.com');
 
     expect(user).toHaveProperty('name');
     expect(user).toHaveProperty('email');
@@ -68,7 +68,7 @@ describe('Find Unique User Use Case', () => {
       password_hash,
     });
 
-    const user = await sut.execute('johndoe@example.com');
+    const { user } = await sut.execute('johndoe@example.com');
 
     expect(user.name).toBe('John Doe');
 

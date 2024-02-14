@@ -23,7 +23,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload: { sub: string }) {
-    const user = await this.findUniqueUserService.execute(payload.sub);
+    const { user } = await this.findUniqueUserService.execute(payload.sub);
 
     if (!user) {
       throw new UnauthorizedException(INVALID_CREDENTIALS);

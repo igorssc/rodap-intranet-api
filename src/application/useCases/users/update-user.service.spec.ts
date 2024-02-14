@@ -32,7 +32,9 @@ describe('Update User Use Case', () => {
       password_hash,
     });
 
-    const userChanged = await sut.execute(userCreated.id, { name: 'Peter' });
+    const { user: userChanged } = await sut.execute(userCreated.id, {
+      name: 'Peter',
+    });
 
     expect(userChanged.id).toEqual(userCreated.id);
 

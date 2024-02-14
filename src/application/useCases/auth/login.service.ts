@@ -15,8 +15,10 @@ export class LoginService {
   async execute(user: LoginUseCaseProps): Promise<LoginUseCaseResponse> {
     const payload = { sub: user.id };
 
+    const access_token = this.jwtService.sign(payload);
+
     return {
-      access_token: this.jwtService.sign(payload),
+      access_token,
     };
   }
 }

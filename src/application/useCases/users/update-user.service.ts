@@ -1,28 +1,31 @@
 import { Expose } from '@/application/providers/prisma/prisma.interface';
-import { PrismaService } from '@/application/providers/prisma/prisma.service';
 import { UsersRepository } from '@/application/repositories/users.repository';
 import { UpdateUserDto } from '@/infra/dtos/users/update-user.dto';
 import { Injectable } from '@nestjs/common';
 import { User } from '@prisma/client';
 import { hash } from 'bcryptjs';
 
+interface UpdateUserUseCaseResponse {
+  user: Expose<User>;
+}
+
 @Injectable()
 export class UpdateUserService {
-  constructor(
-    private usersRepository: UsersRepository,
-    private prismaService: PrismaService,
-  ) {}
+  constructor(private usersRepository: UsersRepository) {}
 
-  async execute(userId: string, user: UpdateUserDto): Promise<Expose<User>> {
+  async execute(
+    userId: string,
+    user: UpdateUserDto,
+  ): Promise<UpdateUserUseCaseResponse> {
     const password_hash = user.password && (await hash(user.password, 6));
 
+    const { password, ...userToUpdate } = user;
+
     const userUpdated = await this.usersRepository.update(userId, {
-      ...user,
-      ...(user.password && { password_hash }),
+      ...userToUpdate,
+      ...(password && { password_hash }),
     });
 
-    const usersExposed = this.prismaService.expose(userUpdated);
-
-    return usersExposed;
+    return { user: userUpdated };
   }
 }

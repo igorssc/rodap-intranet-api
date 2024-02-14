@@ -54,8 +54,12 @@ export class InMemoryActionLogsRepository implements ActionLogsRepository {
     return data;
   }
 
-  async findAll({ page, pageSize }: FindAllProps) {
-    const filteredItems = this.items;
+  async findAll({ page, pageSize, hiddenId }: FindAllProps) {
+    let filteredItems = this.items;
+
+    if (hiddenId) {
+      filteredItems = filteredItems.filter((item) => item.id !== hiddenId);
+    }
 
     const start = (page - 1) * pageSize;
     const end = start + pageSize;

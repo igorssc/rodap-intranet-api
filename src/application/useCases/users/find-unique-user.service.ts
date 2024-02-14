@@ -1,32 +1,28 @@
 import { INVALID_PARAMS } from '@/application/errors/errors.constants';
 import { UserWithRoles } from '@/application/interfaces/user';
 import { Expose } from '@/application/providers/prisma/prisma.interface';
-import { PrismaService } from '@/application/providers/prisma/prisma.service';
 import { UsersRepository } from '@/application/repositories/users.repository';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { isEmail, isUUID } from 'class-validator';
 
+interface FindUniqueUserUseCaseResponse {
+  user: Expose<UserWithRoles>;
+}
+
 @Injectable()
 export class FindUniqueUserService {
-  constructor(
-    private usersRepository: UsersRepository,
-    private prismaService: PrismaService,
-  ) {}
+  constructor(private usersRepository: UsersRepository) {}
 
-  async execute(query: string): Promise<Expose<UserWithRoles>> {
+  async execute(query: string): Promise<FindUniqueUserUseCaseResponse> {
     if (isUUID(query)) {
       const user = await this.usersRepository.findById(query);
 
-      const userExposed = this.prismaService.expose(user);
-
-      return userExposed;
+      return { user };
     }
     if (isEmail(query)) {
       const user = await this.usersRepository.findByEmail(query);
 
-      const userExposed = this.prismaService.expose(user);
-
-      return userExposed;
+      return { user };
     }
 
     throw new BadRequestException(INVALID_PARAMS);

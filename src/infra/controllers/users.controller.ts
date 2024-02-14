@@ -19,8 +19,8 @@ import {
   Get,
   HttpCode,
   Param,
+  Patch,
   Post,
-  Put,
   Query,
   UseGuards,
 } from '@nestjs/common';
@@ -32,45 +32,47 @@ import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 import { PoliciesGuard } from '../guards/policies.guard';
 import { FindAllUsersDto } from '../dtos/users/find-all-users.dto';
 import { User } from '../decorators/user.decorator';
-import { FindMeService } from '@/application/useCases/users/find-me.service';
+import { CreateUserLogService } from '@/application/useCases/actionLogs/user/create-user-logs.service';
+import { UpdateUserLogService } from '@/application/useCases/actionLogs/user/update-user-logs.service';
+import { PrismaService } from '@/application/providers/prisma/prisma.service';
+import { DeleteUserLogService } from '@/application/useCases/actionLogs/user/delete-user-logs.service';
 
 @Controller('users')
 export class UsersController {
   constructor(
     private createUserService: CreateUserService,
-    private findMeService: FindMeService,
     private findAllUsersService: FindAllUsersService,
     private findUniqueUserService: FindUniqueUserService,
     private updateUserService: UpdateUserService,
     private deleteUniqueUserService: DeleteUniqueUserService,
     private caslAbilityFactory: CaslAbilityFactory,
+    private createUserLogService: CreateUserLogService,
+    private updateUserLogService: UpdateUserLogService,
+    private deleteUserLogService: DeleteUserLogService,
+    private prismaService: PrismaService,
   ) {}
-
-  @Post()
-  @HttpCode(201)
-  @UseGuards(JwtAuthGuard, PoliciesGuard)
-  @CheckPolicies(RolesAction.create, RolesSubject.USER)
-  async createUser(@Body() body: CreateUserDto) {
-    await this.createUserService.execute(body);
-  }
 
   @Get('me')
   @UseGuards(JwtAuthGuard)
   async findMe(@User() user: UserProps) {
-    return this.findMeService.execute(user);
+    const userExposed = this.prismaService.expose(user);
+
+    return userExposed;
   }
 
   @Get(':query')
   @UseGuards(JwtAuthGuard, PoliciesGuard)
   @CheckPolicies(RolesAction.read, RolesSubject.USER)
   async findUnique(@Param('query') query: string) {
-    const user = await this.findUniqueUserService.execute(query);
+    const { user } = await this.findUniqueUserService.execute(query);
 
     if (!user) {
       throw new BadRequestException(USER_NOT_FOUND);
     }
 
-    return user;
+    const userExposed = this.prismaService.expose(user);
+
+    return userExposed;
   }
 
   @Get()
@@ -86,7 +88,24 @@ export class UsersController {
     });
   }
 
-  @Put(':userId')
+  @Post()
+  @HttpCode(201)
+  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @CheckPolicies(RolesAction.create, RolesSubject.USER)
+  async createUser(@Body() body: CreateUserDto, @User() user: UserProps) {
+    const { user: userCreated } = await this.createUserService.execute(body);
+
+    const userExposed = this.prismaService.expose(userCreated);
+
+    await this.createUserLogService.execute({
+      actionUserId: user.id,
+      userCreated,
+    });
+
+    return userExposed;
+  }
+
+  @Patch(':userId')
   @UseGuards(JwtAuthGuard)
   async update(
     @Param('userId') userId: string,
@@ -99,7 +118,9 @@ export class UsersController {
       subject(RolesSubject.USER, user as UserWithRoles),
     );
 
-    const userToBeChanged = await this.findUniqueUserService.execute(userId);
+    const { user: userToBeChanged } = await this.findUniqueUserService.execute(
+      userId,
+    );
 
     if (!userToBeChanged) {
       throw new BadRequestException(USER_NOT_FOUND);
@@ -118,7 +139,20 @@ export class UsersController {
       body.is_admin = undefined;
     }
 
-    return await this.updateUserService.execute(userId, body);
+    const { user: userUpdated } = await this.updateUserService.execute(
+      userId,
+      body,
+    );
+
+    const userExposed = this.prismaService.expose(userUpdated);
+
+    await this.updateUserLogService.execute({
+      actionUserId: user.id,
+      userUpdatedBefore: userUpdated,
+      userUpdatedAfter: userToBeChanged,
+    });
+
+    return userExposed;
   }
 
   @Delete(':userId')
@@ -129,7 +163,9 @@ export class UsersController {
       subject(RolesSubject.USER, user as UserWithRoles),
     );
 
-    const userToBeDeleted = await this.findUniqueUserService.execute(userId);
+    const { user: userToBeDeleted } = await this.findUniqueUserService.execute(
+      userId,
+    );
 
     if (!userToBeDeleted) {
       throw new BadRequestException(USER_NOT_FOUND);
@@ -145,5 +181,10 @@ export class UsersController {
     }
 
     await this.deleteUniqueUserService.execute(userId);
+
+    await this.deleteUserLogService.execute({
+      actionUserId: user.id,
+      userDeleted: userToBeDeleted,
+    });
   }
 }

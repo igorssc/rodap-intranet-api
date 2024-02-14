@@ -3,6 +3,7 @@ import { LocalAuthGuard } from '@/infra/guards/local-auth.guard';
 import { Controller, HttpCode, Post, UseGuards } from '@nestjs/common';
 import { User } from '../decorators/user.decorator';
 import { User as UserProps } from '@prisma/client';
+import { CreateActionLogService } from '@/application/useCases/actionLogs/create-action-logs.service';
 
 interface LoginResponse {
   access_token: string;
@@ -10,12 +11,22 @@ interface LoginResponse {
 
 @Controller('auth')
 export class AuthenticateController {
-  constructor(private loginService: LoginService) {}
+  constructor(
+    private loginService: LoginService,
+    private createActionLogService: CreateActionLogService,
+  ) {}
 
   @HttpCode(200)
   @Post()
   @UseGuards(LocalAuthGuard)
   async login(@User() user: UserProps): Promise<LoginResponse> {
-    return this.loginService.execute(user);
+    const { access_token } = await this.loginService.execute(user);
+
+    await this.createActionLogService.execute({
+      userId: user.id,
+      action_type: 'LOGIN',
+    });
+
+    return { access_token };
   }
 }

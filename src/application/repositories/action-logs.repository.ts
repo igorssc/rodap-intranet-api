@@ -9,6 +9,7 @@ export interface FindAllByUserProps {
 export interface FindAllProps {
   page: number;
   pageSize: number;
+  hiddenId?: string;
 }
 
 export abstract class ActionLogsRepository {

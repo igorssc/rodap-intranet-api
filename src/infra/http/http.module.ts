@@ -6,6 +6,8 @@ import { CaslAbilitylModule } from '../casl/casl-ability.module';
 import { AuthenticateController } from '../controllers/authenticate.controller';
 import { UsersController } from '../controllers/users.controller';
 import { GuardsModule } from '../guards/guards.module';
+import { ActionLogsModule } from '@/application/useCases/actionLogs/action-logs.module';
+import { ActionsLogController } from '../controllers/actions-type.controller';
 
 @Module({
   imports: [
@@ -14,8 +16,9 @@ import { GuardsModule } from '../guards/guards.module';
     GuardsModule,
     AuthenticateModule,
     CaslAbilitylModule,
+    ActionLogsModule,
   ],
-  controllers: [UsersController, AuthenticateController],
+  controllers: [UsersController, AuthenticateController, ActionsLogController],
   providers: [],
 })
 export class HttpModule {}
