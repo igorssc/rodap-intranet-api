@@ -1,6 +1,6 @@
 import { Expose } from '@/application/providers/prisma/prisma.interface';
 import { PrismaService } from '@/application/providers/prisma/prisma.service';
-import { UsersRepository } from '@/application/repositories/users-repository';
+import { UsersRepository } from '@/application/repositories/users.repository';
 import { UpdateUserDto } from '@/infra/dtos/users/update-user.dto';
 import { Injectable } from '@nestjs/common';
 import { User } from '@prisma/client';

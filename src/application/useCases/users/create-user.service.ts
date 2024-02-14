@@ -1,5 +1,5 @@
 import { USER_ALREADY_EXISTS } from '@/application/errors/errors.constants';
-import { UsersRepository } from '@/application/repositories/users-repository';
+import { UsersRepository } from '@/application/repositories/users.repository';
 import { CreateUserDto } from '@/infra/dtos/users/create-user.dto';
 import { ConflictException, Injectable } from '@nestjs/common';
 import { User } from '@prisma/client';

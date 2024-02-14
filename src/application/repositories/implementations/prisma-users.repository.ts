@@ -1,7 +1,7 @@
 import { PrismaService } from '@/application/providers/prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
-import { FindAllUsersProps, UsersRepository } from '../users-repository';
+import { FindAllProps, UsersRepository } from '../users.repository';
 
 @Injectable()
 export class PrismaUsersRepository implements UsersRepository {
@@ -45,7 +45,7 @@ export class PrismaUsersRepository implements UsersRepository {
     return await this.prisma.user.count();
   }
 
-  async findAll({ page, pageSize, hiddenId }: FindAllUsersProps) {
+  async findAll({ page, pageSize, hiddenId }: FindAllProps) {
     const data = await this.prisma.user.findMany({
       orderBy: { created_at: 'desc' },
       where: {

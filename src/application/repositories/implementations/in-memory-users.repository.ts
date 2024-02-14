@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma, Role, User } from '@prisma/client';
 import { randomUUID } from 'node:crypto';
-import { FindAllUsersProps, UsersRepository } from '../users-repository';
+import { FindAllProps, UsersRepository } from '../users.repository';
 
 @Injectable()
 export class InMemoryUsersRepository implements UsersRepository {
@@ -52,7 +52,7 @@ export class InMemoryUsersRepository implements UsersRepository {
     return this.items.length;
   }
 
-  async findAll({ page, pageSize, hiddenId }: FindAllUsersProps) {
+  async findAll({ page, pageSize, hiddenId }: FindAllProps) {
     let filteredItems = this.items;
 
     if (hiddenId) {

@@ -1,5 +1,5 @@
 import { INVALID_CREDENTIALS } from '@/application/errors/errors.constants';
-import { UsersRepository } from '@/application/repositories/users-repository';
+import { UsersRepository } from '@/application/repositories/users.repository';
 import {
   BadRequestException,
   Injectable,

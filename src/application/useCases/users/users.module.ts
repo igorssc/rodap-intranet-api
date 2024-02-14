@@ -1,6 +1,6 @@
 import { PrismaService } from '@/application/providers/prisma/prisma.service';
-import { PrismaUsersRepository } from '@/application/repositories/implementations/prisma-users-repository';
-import { UsersRepository } from '@/application/repositories/users-repository';
+import { PrismaUsersRepository } from '@/application/repositories/implementations/prisma-users.repository';
+import { UsersRepository } from '@/application/repositories/users.repository';
 import { Module } from '@nestjs/common';
 import { CreateUserService } from './create-user.service';
 import { DeleteUniqueUserService } from './delete-unique-user.service';

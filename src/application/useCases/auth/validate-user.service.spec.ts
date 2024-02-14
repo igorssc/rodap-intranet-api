@@ -1,5 +1,5 @@
-import { InMemoryUsersRepository } from '@/application/repositories/implementations/in-memory-users-repository';
-import { UsersRepository } from '@/application/repositories/users-repository';
+import { InMemoryUsersRepository } from '@/application/repositories/implementations/in-memory-users.repository';
+import { UsersRepository } from '@/application/repositories/users.repository';
 import { BadRequestException, UnauthorizedException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { hash } from 'bcryptjs';

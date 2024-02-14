@@ -1,7 +1,7 @@
 import { Prisma, User } from '@prisma/client';
 import { UserWithRoles } from '../interfaces/user';
 
-export interface FindAllUsersProps {
+export interface FindAllProps {
   page: number;
   pageSize: number;
   hiddenId?: string;
@@ -12,7 +12,7 @@ export abstract class UsersRepository {
 
   totalCount: () => Promise<number>;
 
-  findAll: (props: FindAllUsersProps) => Promise<User[]>;
+  findAll: (props: FindAllProps) => Promise<User[]>;
 
   update: (userId: string, user: Prisma.UserUpdateInput) => Promise<User>;
 

@@ -1,5 +1,5 @@
 import { Expose } from '@/application/providers/prisma/prisma.interface';
-import { UsersRepository } from '@/application/repositories/users-repository';
+import { UsersRepository } from '@/application/repositories/users.repository';
 import { Injectable } from '@nestjs/common';
 import { User } from '@prisma/client';
 

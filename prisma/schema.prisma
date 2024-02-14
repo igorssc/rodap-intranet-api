@@ -56,10 +56,10 @@ enum ActionLogType {
 }
 
 model ActionLog {
-  id         String        @id @default(uuid())
-  actionType ActionLogType
-  actionData Json
-  created_at DateTime      @default(now())
+  id          String        @id @default(uuid())
+  action_type ActionLogType
+  action_data Json
+  created_at  DateTime      @default(now())
 
   User    User   @relation(fields: [user_id], references: [id], onDelete: Cascade)
   user_id String

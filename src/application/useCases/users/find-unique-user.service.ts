@@ -2,7 +2,7 @@ import { INVALID_PARAMS } from '@/application/errors/errors.constants';
 import { UserWithRoles } from '@/application/interfaces/user';
 import { Expose } from '@/application/providers/prisma/prisma.interface';
 import { PrismaService } from '@/application/providers/prisma/prisma.service';
-import { UsersRepository } from '@/application/repositories/users-repository';
+import { UsersRepository } from '@/application/repositories/users.repository';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { isEmail, isUUID } from 'class-validator';
 

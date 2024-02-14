@@ -1,7 +1,7 @@
 import { PaginatedData } from '@/application/interfaces/pagination';
 import { Expose } from '@/application/providers/prisma/prisma.interface';
 import { PrismaService } from '@/application/providers/prisma/prisma.service';
-import { UsersRepository } from '@/application/repositories/users-repository';
+import { UsersRepository } from '@/application/repositories/users.repository';
 import { pagination } from '@/application/utils/pagination';
 import { Injectable } from '@nestjs/common';
 import { User } from '@prisma/client';

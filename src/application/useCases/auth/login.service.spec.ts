@@ -1,5 +1,5 @@
-import { InMemoryUsersRepository } from '@/application/repositories/implementations/in-memory-users-repository';
-import { UsersRepository } from '@/application/repositories/users-repository';
+import { InMemoryUsersRepository } from '@/application/repositories/implementations/in-memory-users.repository';
+import { UsersRepository } from '@/application/repositories/users.repository';
 import { JwtModule } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
 import { hash } from 'bcryptjs';
