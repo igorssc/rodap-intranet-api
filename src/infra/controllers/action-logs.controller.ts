@@ -19,7 +19,7 @@ import { FindUniqueUserService } from '@/application/useCases/users/find-unique-
 import { USER_NOT_FOUND } from '@/application/errors/errors.constants';
 
 @Controller('actions')
-export class ActionsLogController {
+export class ActionLogsController {
   constructor(
     private findAllActionLogsService: FindAllActionLogsService,
     private findActionLogsByUserService: FindActionLogsByUserService,

@@ -23,11 +23,13 @@ export class FindActionLogsByUserService {
       userId,
     });
 
+    const totalCount = await this.actionLogsRepository.totalUserCount(userId);
+
     const dataPaginated = pagination({
       data,
       page,
       pageSize: limit,
-      totalCount: 1,
+      totalCount,
     });
 
     return dataPaginated;
