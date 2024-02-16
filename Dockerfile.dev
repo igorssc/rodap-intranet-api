@@ -6,9 +6,9 @@ WORKDIR /app
 
 COPY package.json ./
 
-RUN pnpm install
-
 COPY . .
+
+RUN pnpm install
 
 EXPOSE 3000
 

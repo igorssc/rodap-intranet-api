@@ -1,11 +1,19 @@
 import { keyTranslator } from './translate-user-keys';
 
-export const findDifferentKeys = (obj1: any, obj2: any): string[] => {
+export const findDifferentKeys = (
+  baseObj: any,
+  compareObj: any,
+  ignoreEmpty = false,
+): string[] => {
   const differentKeys: string[] = [];
 
-  for (const key in obj1) {
-    if (obj1.hasOwnProperty(key) && obj2.hasOwnProperty(key)) {
-      if (obj1[key].toString() !== obj2[key].toString()) {
+  for (const key in baseObj) {
+    const baseContainsObj = baseObj.hasOwnProperty(key);
+
+    const considerEmpty = !ignoreEmpty && compareObj.hasOwnProperty(key);
+
+    if (baseContainsObj && considerEmpty) {
+      if (baseObj[key]?.toString() !== compareObj[key]?.toString()) {
         const translatedKey = keyTranslator[key] || key;
 
         differentKeys.push(translatedKey);

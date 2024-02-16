@@ -1,6 +1,7 @@
 import { USER_ALREADY_EXISTS } from '@/application/errors/errors.constants';
 import { Expose } from '@/application/providers/prisma/prisma.interface';
 import { UsersRepository } from '@/application/repositories/users.repository';
+import { capitalizeInitials } from '@/application/utils/capitalize-initials';
 import { CreateUserDto } from '@/infra/dtos/users/create-user.dto';
 import { ConflictException, Injectable } from '@nestjs/common';
 import { User } from '@prisma/client';
@@ -26,8 +27,8 @@ export class CreateUserService {
     }
 
     const userCreated = await this.usersRepository.create({
-      name,
-      email,
+      name: capitalizeInitials(name),
+      email: email.toLocaleLowerCase(),
       password_hash,
     });
 
