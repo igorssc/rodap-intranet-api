@@ -178,30 +178,18 @@ export class UsersController {
 
   @Patch(':userId')
   @UseGuards(JwtAuthGuard)
+  @CheckPolicies(RolesAction.update, RolesSubject.USER)
   async update(
     @Param('userId') userId: string,
     @Body() body: UpdateUserDto,
     @User() user: UserProps,
   ) {
-    const ability = this.caslAbilityFactory.createForUser(
-      subject(RolesSubject.USER, user as UserWithRoles),
-    );
-
     const { user: userToBeChanged } = await this.findUniqueUserService.execute(
       userId,
     );
 
     if (!userToBeChanged) {
       throw new BadRequestException(USER_NOT_FOUND);
-    }
-
-    const isAllowed = ability.can(
-      RolesAction.update,
-      subject(RolesSubject.USER, userToBeChanged as UserWithRoles),
-    );
-
-    if (!isAllowed && user.id !== userToBeChanged.id) {
-      throw new ForbiddenException(INVALID_PERMISSION);
     }
 
     if (body.is_admin && !user.is_admin) {
