@@ -7,6 +7,8 @@ import * as fs from 'node:fs';
 import { DeleteUniqueFileFromS3Service } from '../delete-unique-file-from-s3.service';
 import { extractFileNameFromS3Url } from '@/application/utils/extract-file-name-from-s3-url';
 
+type ParseUser = Partial<User> & Pick<User, 'id' | 'picture_profile'>;
+
 @Injectable()
 export class UploadPictureProfileService {
   constructor(
@@ -16,7 +18,7 @@ export class UploadPictureProfileService {
     private deleteUniqueFileFromS3Service: DeleteUniqueFileFromS3Service,
   ) {}
 
-  async execute(user: User, file: Express.Multer.File) {
+  async execute(user: ParseUser, file: Express.Multer.File) {
     const fileCompressed = await this.compressPictureService.execute({
       fileName: file.filename,
       mimetype: 'webp',

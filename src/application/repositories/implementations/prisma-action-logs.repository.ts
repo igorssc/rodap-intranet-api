@@ -35,6 +35,15 @@ export class PrismaActionLogsRepository implements ActionLogsRepository {
           user_id: hiddenId,
         },
       },
+      include: {
+        User: {
+          select: {
+            id: true,
+            email: true,
+            name: true,
+          },
+        },
+      },
       skip: (page - 1) * pageSize,
       take: pageSize,
     });

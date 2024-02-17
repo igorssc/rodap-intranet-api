@@ -15,19 +15,15 @@ import {
   Body,
   Controller,
   Delete,
-  FileTypeValidator,
   ForbiddenException,
   Get,
   HttpCode,
-  MaxFileSizeValidator,
   Param,
-  ParseFilePipe,
   Patch,
   Post,
   Query,
   UploadedFile,
   UseGuards,
-  UseInterceptors,
 } from '@nestjs/common';
 import { RolesAction, RolesSubject, User as UserProps } from '@prisma/client';
 import { CaslAbilityFactory } from '../casl/casl-ability.factory';
@@ -41,9 +37,10 @@ import { CreateUserLogService } from '@/application/useCases/actionLogs/user/cre
 import { UpdateUserLogService } from '@/application/useCases/actionLogs/user/update-user-logs.service';
 import { PrismaService } from '@/application/providers/prisma/prisma.service';
 import { DeleteUserLogService } from '@/application/useCases/actionLogs/user/delete-user-logs.service';
-import { FileInterceptor } from '@nestjs/platform-express';
-import multerConfig from '../config/multer';
 import { UploadPictureProfileService } from '@/application/useCases/files/user/upload-picture-profile.service';
+import { UpdateMeUserDto } from '../dtos/users/update-me-user.dto';
+import { PictureUploadInterceptor } from '../decorators/picture-upload-interceptor.decorator';
+import { UpdateMeLogService } from '@/application/useCases/actionLogs/user/update-me-logs.service';
 
 @Controller('users')
 export class UsersController {
@@ -58,6 +55,7 @@ export class UsersController {
     private updateUserLogService: UpdateUserLogService,
     private deleteUserLogService: DeleteUserLogService,
     private uploadPictureProfileService: UploadPictureProfileService,
+    private updateMeLogService: UpdateMeLogService,
     private prismaService: PrismaService,
   ) {}
 
@@ -114,34 +112,68 @@ export class UsersController {
     return userExposed;
   }
 
-  @Patch('profile-upload')
+  @Patch('picture-profile')
   @UseGuards(JwtAuthGuard)
-  @UseInterceptors(FileInterceptor('file', multerConfig))
-  async uploadFile(
-    @UploadedFile(
-      new ParseFilePipe({
-        validators: [
-          new FileTypeValidator({
-            fileType: '.(png|jpeg|jpg)',
-          }),
-          new MaxFileSizeValidator({
-            maxSize: 1024 * 1024 * 2,
-            message: 'Tamanho do arquivo supera o máximo permitido.',
-          }),
-        ],
-      }),
-    )
-    file: Express.Multer.File,
+  @PictureUploadInterceptor()
+  async updatePictureProfileMe(
+    @UploadedFile() file: Express.Multer.File,
     @User() user: UserProps,
   ) {
     const { user: userUpdated } =
       await this.uploadPictureProfileService.execute(user, file);
 
-    await this.updateUserLogService.execute({
+    await this.updateMeLogService.execute({
       actionUserId: user.id,
       userUpdatedBefore: user,
       userUpdatedAfter: userUpdated,
     });
+  }
+
+  @Patch('picture-profile/:userId')
+  @UseGuards(JwtAuthGuard)
+  @CheckPolicies(RolesAction.update, RolesSubject.USER)
+  @PictureUploadInterceptor()
+  async updatePictureProfile(
+    @Param('userId') userId: string,
+    @UploadedFile() file: Express.Multer.File,
+    @User() user: UserProps,
+  ) {
+    const { user: userToBeChanged } = await this.findUniqueUserService.execute(
+      userId,
+    );
+
+    if (!userToBeChanged) {
+      throw new BadRequestException(USER_NOT_FOUND);
+    }
+
+    const { user: userUpdated } =
+      await this.uploadPictureProfileService.execute(userToBeChanged, file);
+
+    await this.updateUserLogService.execute({
+      actionUserId: user.id,
+      updatedUser: userToBeChanged,
+      userUpdatedBefore: userToBeChanged,
+      userUpdatedAfter: userUpdated,
+    });
+  }
+
+  @Patch()
+  @UseGuards(JwtAuthGuard)
+  async updateMe(@Body() body: UpdateMeUserDto, @User() user: UserProps) {
+    const { user: userUpdated } = await this.updateUserService.execute(
+      user.id,
+      body,
+    );
+
+    const userExposed = this.prismaService.expose(userUpdated);
+
+    await this.updateMeLogService.execute({
+      actionUserId: user.id,
+      userUpdatedBefore: user,
+      userUpdatedAfter: userUpdated,
+    });
+
+    return userExposed;
   }
 
   @Patch(':userId')
@@ -151,8 +183,6 @@ export class UsersController {
     @Body() body: UpdateUserDto,
     @User() user: UserProps,
   ) {
-    const { is_admin } = body;
-
     const ability = this.caslAbilityFactory.createForUser(
       subject(RolesSubject.USER, user as UserWithRoles),
     );
@@ -174,7 +204,7 @@ export class UsersController {
       throw new ForbiddenException(INVALID_PERMISSION);
     }
 
-    if (is_admin && !user.is_admin) {
+    if (body.is_admin && !user.is_admin) {
       body.is_admin = undefined;
     }
 
@@ -187,8 +217,9 @@ export class UsersController {
 
     await this.updateUserLogService.execute({
       actionUserId: user.id,
-      userUpdatedBefore: userUpdated,
-      userUpdatedAfter: userToBeChanged,
+      updatedUser: userToBeChanged,
+      userUpdatedBefore: userToBeChanged,
+      userUpdatedAfter: userUpdated,
     });
 
     return userExposed;

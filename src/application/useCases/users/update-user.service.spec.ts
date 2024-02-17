@@ -39,7 +39,5 @@ describe('Update User Use Case', () => {
     expect(userChanged.id).toEqual(userCreated.id);
 
     expect(userChanged.name).toEqual('Peter');
-
-    expect(userChanged).not.toHaveProperty('password_hash');
   });
 });

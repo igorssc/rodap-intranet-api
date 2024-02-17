@@ -6,18 +6,16 @@ import { findDifferentKeys } from '@/application/utils/find-different-keys';
 
 interface UpdateUserLogServiceExecuteProps {
   actionUserId: string;
-  updatedUser: Partial<User> & Pick<User, 'id' | 'name' | 'email'>;
   userUpdatedBefore: Expose<User>;
   userUpdatedAfter: Expose<User>;
 }
 
 @Injectable()
-export class UpdateUserLogService {
+export class UpdateMeLogService {
   constructor(private createActionLogService: CreateActionLogService) {}
 
   async execute({
     actionUserId,
-    updatedUser,
     userUpdatedBefore,
     userUpdatedAfter,
   }: UpdateUserLogServiceExecuteProps) {
@@ -28,11 +26,6 @@ export class UpdateUserLogService {
         userId: actionUserId,
         action_type: 'UPDATE_USER',
         action_data: {
-          user_updated: {
-            id: updatedUser.id,
-            name: updatedUser.name,
-            email: updatedUser.email,
-          },
           updated_values: keysUpdated,
         },
       });

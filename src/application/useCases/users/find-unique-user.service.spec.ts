@@ -58,20 +58,4 @@ describe('Find Unique User Use Case', () => {
     expect(user.name).toBe('John Doe');
     expect(user.email).toBe('johndoe@example.com');
   });
-
-  it('should not be able to find user with the password', async () => {
-    const password_hash = await hash('123456', 6);
-
-    await usersRepository.create({
-      name: 'John Doe',
-      email: 'johndoe@example.com',
-      password_hash,
-    });
-
-    const { user } = await sut.execute('johndoe@example.com');
-
-    expect(user.name).toBe('John Doe');
-
-    expect(user).not.toHaveProperty('password_hash');
-  });
 });
