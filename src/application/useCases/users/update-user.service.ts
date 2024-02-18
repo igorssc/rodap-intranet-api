@@ -1,4 +1,5 @@
 import { UsersRepository } from '@/application/repositories/users.repository';
+import { capitalizeInitials } from '@/application/utils/capitalize-initials';
 import { UpdateUserDto } from '@/infra/dtos/users/update-user.dto';
 import { Injectable } from '@nestjs/common';
 import { hash } from 'bcryptjs';
@@ -14,6 +15,7 @@ export class UpdateUserService {
 
     const userUpdated = await this.usersRepository.update(userId, {
       ...userToUpdate,
+      ...(user.name && { name: capitalizeInitials(user.name) }),
       ...(password && { password_hash }),
     });
 

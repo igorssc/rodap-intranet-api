@@ -63,4 +63,14 @@ describe('Create User Use Case', () => {
       }),
     ).rejects.toBeInstanceOf(ConflictException);
   });
+
+  it('should not be able to create a user with a lowercase name', async () => {
+    const { user: userCreated } = await sut.execute({
+      name: 'john doe',
+      email: 'johndoe@example.com',
+      password: '123456',
+    });
+
+    await expect(userCreated.name).toBe('John Doe');
+  });
 });

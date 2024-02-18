@@ -33,10 +33,26 @@ describe('Update User Use Case', () => {
     });
 
     const { user: userChanged } = await sut.execute(userCreated.id, {
-      name: 'Peter',
+      email: 'alicesmith@example.com',
     });
 
     expect(userChanged.id).toEqual(userCreated.id);
+
+    expect(userChanged.email).toEqual('alicesmith@example.com');
+  });
+
+  it('should not be able to update a user with a lowercase name', async () => {
+    const password_hash = await hash('123456', 6);
+
+    const userCreated = await usersRepository.create({
+      name: 'John Doe',
+      email: 'johndoe@example.com',
+      password_hash,
+    });
+
+    const { user: userChanged } = await sut.execute(userCreated.id, {
+      name: 'peter',
+    });
 
     expect(userChanged.name).toEqual('Peter');
   });
