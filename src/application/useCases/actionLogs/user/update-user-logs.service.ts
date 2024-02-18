@@ -1,14 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { CreateActionLogService } from '../create-action-logs.service';
-import { User } from '@prisma/client';
-import { Expose } from '@/application/providers/prisma/prisma.interface';
+import { ActionLogType } from '@prisma/client';
 import { findDifferentKeys } from '@/application/utils/find-different-keys';
+import { PartialUserWithMasterData } from '@/application/interfaces/user';
 
 interface UpdateUserLogServiceExecuteProps {
-  actionUserId: string;
-  updatedUser: Partial<User> & Pick<User, 'id' | 'name' | 'email'>;
-  userUpdatedBefore: Expose<User>;
-  userUpdatedAfter: Expose<User>;
+  updatedUser: PartialUserWithMasterData;
+  userUpdatedBefore: PartialUserWithMasterData;
+  userUpdatedAfter: PartialUserWithMasterData;
+  actionUser: PartialUserWithMasterData;
 }
 
 @Injectable()
@@ -16,8 +16,8 @@ export class UpdateUserLogService {
   constructor(private createActionLogService: CreateActionLogService) {}
 
   async execute({
-    actionUserId,
     updatedUser,
+    actionUser,
     userUpdatedBefore,
     userUpdatedAfter,
   }: UpdateUserLogServiceExecuteProps) {
@@ -25,9 +25,14 @@ export class UpdateUserLogService {
 
     if (keysUpdated.length) {
       const { actionLog } = await this.createActionLogService.execute({
-        userId: actionUserId,
-        action_type: 'UPDATE_USER',
+        userId: actionUser.id,
+        action_type: ActionLogType.UPDATE_USER,
         action_data: {
+          action_user: {
+            id: actionUser.id,
+            name: actionUser.name,
+            email: actionUser.email,
+          },
           user_updated: {
             id: updatedUser.id,
             name: updatedUser.name,

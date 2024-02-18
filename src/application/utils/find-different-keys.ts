@@ -7,12 +7,13 @@ export const findDifferentKeys = (
 ): string[] => {
   const differentKeys: string[] = [];
 
-  for (const key in baseObj) {
-    const baseContainsObj = baseObj.hasOwnProperty(key);
+  for (const key in compareObj) {
+    const baseContainsObj =
+      baseObj.hasOwnProperty(key) && compareObj.hasOwnProperty(key);
 
     const considerEmpty = !ignoreEmpty && compareObj.hasOwnProperty(key);
 
-    if (baseContainsObj && considerEmpty) {
+    if (baseContainsObj || considerEmpty) {
       if (baseObj[key]?.toString() !== compareObj[key]?.toString()) {
         const translatedKey = keyTranslator[key] || key;
 

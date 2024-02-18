@@ -1,5 +1,4 @@
 import { USER_ALREADY_EXISTS } from '@/application/errors/errors.constants';
-import { Expose } from '@/application/providers/prisma/prisma.interface';
 import { UsersRepository } from '@/application/repositories/users.repository';
 import { capitalizeInitials } from '@/application/utils/capitalize-initials';
 import { CreateUserDto } from '@/infra/dtos/users/create-user.dto';
@@ -8,7 +7,7 @@ import { User } from '@prisma/client';
 import { hash } from 'bcryptjs';
 
 interface CreateUserUseCaseResponse {
-  user: Expose<User>;
+  user: User;
 }
 
 @Injectable()

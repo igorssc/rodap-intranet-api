@@ -1,5 +1,5 @@
 import * as crypto from 'node:crypto';
-import { removeAccents } from './removeAccents';
+import { removeAccents } from './remove-accents';
 
 export const generateFileName = (originalName?: string) => {
   const fileHash = String(crypto.randomUUID());

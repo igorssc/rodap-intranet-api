@@ -105,7 +105,7 @@ export class UsersController {
     const userExposed = this.prismaService.expose(userCreated);
 
     await this.createUserLogService.execute({
-      actionUserId: user.id,
+      actionUser: user,
       userCreated,
     });
 
@@ -150,7 +150,7 @@ export class UsersController {
       await this.uploadPictureProfileService.execute(userToBeChanged, file);
 
     await this.updateUserLogService.execute({
-      actionUserId: user.id,
+      actionUser: user,
       updatedUser: userToBeChanged,
       userUpdatedBefore: userToBeChanged,
       userUpdatedAfter: userUpdated,
@@ -204,7 +204,7 @@ export class UsersController {
     const userExposed = this.prismaService.expose(userUpdated);
 
     await this.updateUserLogService.execute({
-      actionUserId: user.id,
+      actionUser: user,
       updatedUser: userToBeChanged,
       userUpdatedBefore: userToBeChanged,
       userUpdatedAfter: userUpdated,
@@ -241,7 +241,7 @@ export class UsersController {
     await this.deleteUniqueUserService.execute(userId);
 
     await this.deleteUserLogService.execute({
-      actionUserId: user.id,
+      actionUser: user,
       userDeleted: userToBeDeleted,
     });
   }

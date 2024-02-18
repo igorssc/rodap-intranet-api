@@ -7,21 +7,17 @@ import {
 } from '../action-logs.repository';
 import { randomUUID } from 'crypto';
 
-interface CreateProps extends Prisma.ActionLogCreateInput {
-  user_id: string;
-}
-
 @Injectable()
 export class InMemoryActionLogsRepository implements ActionLogsRepository {
   public items: ActionLog[] = [];
 
-  async create(data: CreateProps) {
+  async create(data: Prisma.ActionLogCreateInput) {
     const actionLogCreated = {
       id: randomUUID(),
       action_type: data.action_type,
       action_data: data.action_data,
       created_at: new Date(),
-      user_id: data.user_id,
+      user_id: data.User.connect.id,
     } as ActionLog;
 
     this.items.push(actionLogCreated);
