@@ -23,7 +23,7 @@ export class CreateActionLogService {
     const actionLog = await this.actionLogsRepository.create({
       action_data,
       action_type,
-      User: { connect: { id: userId } },
+      user: { connect: { id: userId } },
     });
 
     return { actionLog };

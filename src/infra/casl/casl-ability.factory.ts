@@ -28,7 +28,7 @@ export class CaslAbilityFactory {
     }
 
     if (user.is_admin) {
-      can(RolesAction.manage, 'all');
+      can(RolesAction.MANAGE, 'all');
     } else {
       user.roles.every((role) => can(role.action, role.subject));
     }

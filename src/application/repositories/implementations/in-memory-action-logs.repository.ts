@@ -17,7 +17,7 @@ export class InMemoryActionLogsRepository implements ActionLogsRepository {
       action_type: data.action_type,
       action_data: data.action_data,
       created_at: new Date(),
-      user_id: data.User.connect.id,
+      user_id: data.user.connect.id,
     } as ActionLog;
 
     this.items.push(actionLogCreated);

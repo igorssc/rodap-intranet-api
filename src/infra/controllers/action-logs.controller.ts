@@ -55,7 +55,7 @@ export class ActionLogsController {
 
   @Get(':userId')
   @UseGuards(JwtAuthGuard, PoliciesGuard)
-  @CheckPolicies(RolesAction.read, RolesSubject.USER)
+  @CheckPolicies(RolesAction.READ, RolesSubject.USER)
   async findUnique(
     @Param('userId') userId: string,
     @Query() query: FindAllActionLogsDto,

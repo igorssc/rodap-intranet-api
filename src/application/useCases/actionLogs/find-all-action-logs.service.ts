@@ -1,7 +1,6 @@
 import { PaginatedData } from '@/application/interfaces/pagination';
 import { Expose } from '@/application/providers/prisma/prisma.interface';
 import { ActionLogsRepository } from '@/application/repositories/action-logs.repository';
-import { keysToLowerCase } from '@/application/utils/keys-to-lowe-case';
 import { pagination } from '@/application/utils/pagination';
 import { Injectable } from '@nestjs/common';
 import { ActionLog } from '@prisma/client';
@@ -40,7 +39,7 @@ export class FindAllActionLogsService {
     }
 
     const dataPaginated = pagination({
-      data: keysToLowerCase(data),
+      data,
       page,
       pageSize: limit,
       totalCount,

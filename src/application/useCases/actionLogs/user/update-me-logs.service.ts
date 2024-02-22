@@ -24,7 +24,7 @@ export class UpdateMeLogService {
     if (keysUpdated.length) {
       const { actionLog } = await this.createActionLogService.execute({
         userId: actionUserId,
-        action_type: ActionLogType.UPDATE_USER,
+        action_type: ActionLogType.UPDATE_PROFILE,
         action_data: {
           updated_values: keysUpdated,
         },

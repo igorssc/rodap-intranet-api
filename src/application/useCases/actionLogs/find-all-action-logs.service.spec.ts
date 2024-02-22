@@ -36,7 +36,7 @@ describe('Find all action Logs Use Case', () => {
     await actionLogsRepository.create({
       action_data: { user_created: userCreated },
       action_type: ActionLogType.CREATE_USER,
-      User: { connect: { id: '110ec58a-a0f2-4ac4-8393-c866d813b8d1' } },
+      user: { connect: { id: '110ec58a-a0f2-4ac4-8393-c866d813b8d1' } },
     });
 
     const listActionLogs = await sut.execute();
@@ -81,7 +81,7 @@ describe('Find all action Logs Use Case', () => {
     await actionLogsRepository.create({
       action_data: { user_created: userOneCreated },
       action_type: ActionLogType.CREATE_USER,
-      User: { connect: { id: '110ec58a-a0f2-4ac4-8393-c866d813b8d1' } },
+      user: { connect: { id: '110ec58a-a0f2-4ac4-8393-c866d813b8d1' } },
     });
 
     const userTwoCreated = {
@@ -93,7 +93,7 @@ describe('Find all action Logs Use Case', () => {
     await actionLogsRepository.create({
       action_data: { user_created: userTwoCreated },
       action_type: ActionLogType.CREATE_USER,
-      User: { connect: { id: '110ec58a-a0f2-4ac4-8393-c866d813b8d1' } },
+      user: { connect: { id: '110ec58a-a0f2-4ac4-8393-c866d813b8d1' } },
     });
 
     const listActionLogs = await sut.execute({

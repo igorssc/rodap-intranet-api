@@ -69,7 +69,7 @@ export class UsersController {
 
   @Get(':query')
   @UseGuards(JwtAuthGuard, PoliciesGuard)
-  @CheckPolicies(RolesAction.read, RolesSubject.USER)
+  @CheckPolicies(RolesAction.READ, RolesSubject.USER)
   async findUnique(@Param('query') query: string) {
     const { user } = await this.findUniqueUserService.execute(query);
 
@@ -84,7 +84,7 @@ export class UsersController {
 
   @Get()
   @UseGuards(JwtAuthGuard, PoliciesGuard)
-  @CheckPolicies(RolesAction.read, RolesSubject.USER)
+  @CheckPolicies(RolesAction.READ, RolesSubject.USER)
   async findAll(@User() user: UserProps, @Query() query: FindAllUsersDto) {
     const { page, limit } = query;
 
@@ -98,7 +98,7 @@ export class UsersController {
   @Post()
   @HttpCode(201)
   @UseGuards(JwtAuthGuard, PoliciesGuard)
-  @CheckPolicies(RolesAction.create, RolesSubject.USER)
+  @CheckPolicies(RolesAction.CREATE, RolesSubject.USER)
   async createUser(@Body() body: CreateUserDto, @User() user: UserProps) {
     const { user: userCreated } = await this.createUserService.execute(body);
 
@@ -131,7 +131,7 @@ export class UsersController {
 
   @Patch('picture-profile/:userId')
   @UseGuards(JwtAuthGuard)
-  @CheckPolicies(RolesAction.update, RolesSubject.USER)
+  @CheckPolicies(RolesAction.UPDATE, RolesSubject.USER)
   @PictureUploadInterceptor()
   async updatePictureProfile(
     @Param('userId') userId: string,
@@ -178,7 +178,7 @@ export class UsersController {
 
   @Patch(':userId')
   @UseGuards(JwtAuthGuard)
-  @CheckPolicies(RolesAction.update, RolesSubject.USER)
+  @CheckPolicies(RolesAction.UPDATE, RolesSubject.USER)
   async update(
     @Param('userId') userId: string,
     @Body() body: UpdateUserDto,
@@ -215,7 +215,7 @@ export class UsersController {
 
   @Delete(':userId')
   @UseGuards(JwtAuthGuard, PoliciesGuard)
-  @CheckPolicies(RolesAction.delete, RolesSubject.USER)
+  @CheckPolicies(RolesAction.DELETE, RolesSubject.USER)
   async deleteUnique(@Param('userId') userId: string, @User() user: UserProps) {
     const ability = this.caslAbilityFactory.createForUser(
       subject(RolesSubject.USER, user as UserWithRoles),
@@ -230,7 +230,7 @@ export class UsersController {
     }
 
     const isAllowed = ability.can(
-      RolesAction.delete,
+      RolesAction.DELETE,
       subject(RolesSubject.USER, userToBeDeleted as UserWithRoles),
     );
 

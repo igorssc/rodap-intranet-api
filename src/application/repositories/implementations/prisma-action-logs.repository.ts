@@ -36,7 +36,7 @@ export class PrismaActionLogsRepository implements ActionLogsRepository {
         },
       },
       include: {
-        User: {
+        user: {
           select: {
             id: true,
             email: true,

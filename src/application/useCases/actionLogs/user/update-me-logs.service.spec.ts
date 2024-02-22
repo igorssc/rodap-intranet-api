@@ -44,7 +44,7 @@ describe('Update me logs Use Case', () => {
 
     expect(actionLog.user_id).toEqual('110ec58a-a0f2-4ac4-8393-c866d813b8d1');
 
-    expect(actionLog.action_type).toEqual('UPDATE_USER');
+    expect(actionLog.action_type).toEqual('UPDATE_PROFILE');
 
     expect(actionLog.action_data).toMatchObject({ updated_values: ['name'] });
   });
