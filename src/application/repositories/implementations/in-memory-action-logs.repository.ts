@@ -11,13 +11,13 @@ import { randomUUID } from 'crypto';
 export class InMemoryActionLogsRepository implements ActionLogsRepository {
   public items: ActionLog[] = [];
 
-  async create(data: Prisma.ActionLogCreateInput) {
+  async create(actionLog: Prisma.ActionLogCreateInput) {
     const actionLogCreated = {
       id: randomUUID(),
-      action_type: data.action_type,
-      action_data: data.action_data,
+      action_type: actionLog.action_type,
+      action_data: actionLog.action_data,
       created_at: new Date(),
-      user_id: data.user.connect.id,
+      user_id: actionLog.user.connect.id,
     } as ActionLog;
 
     this.items.push(actionLogCreated);
