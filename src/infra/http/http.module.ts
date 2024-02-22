@@ -9,6 +9,8 @@ import { GuardsModule } from '../guards/guards.module';
 import { ActionLogsModule } from '@/application/useCases/actionLogs/action-logs.module';
 import { ActionLogsController } from '../controllers/action-logs.controller';
 import { FilesModule } from '@/application/useCases/files/files.module';
+import { SupportTicketsController } from '../controllers/support-tickets.controller';
+import { SupportTicketsModule } from '@/application/useCases/support-tickets/support-tickets.module';
 
 @Module({
   imports: [
@@ -19,8 +21,14 @@ import { FilesModule } from '@/application/useCases/files/files.module';
     CaslAbilitylModule,
     ActionLogsModule,
     FilesModule,
+    SupportTicketsModule,
   ],
-  controllers: [UsersController, AuthenticateController, ActionLogsController],
+  controllers: [
+    UsersController,
+    AuthenticateController,
+    ActionLogsController,
+    SupportTicketsController,
+  ],
   providers: [],
 })
 export class HttpModule {}
