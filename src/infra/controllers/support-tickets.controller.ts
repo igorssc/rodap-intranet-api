@@ -1,4 +1,4 @@
-import { CreateMessageFromSupportTicketService } from '@/application/use-cases/support-tickets/create-message-from-support-ticket.service';
+import { CreateMessageFromSupportTicketService } from '@/application/use-cases/support-ticket-messages/create-message-from-support-ticket.service';
 import { CreateSupportTicketService } from '@/application/use-cases/support-tickets/create-support-ticket.service';
 import { DeleteUniqueSupportTicketService } from '@/application/use-cases/support-tickets/delete-unique-support-ticket.service';
 import { FindAllSupportTicketsByCreatorService } from '@/application/use-cases/support-tickets/find-all-support-tickets-by-creator.service';

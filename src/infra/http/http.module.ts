@@ -11,6 +11,7 @@ import { ActionLogsController } from '../controllers/action-logs.controller';
 import { FilesModule } from '@/application/use-cases/files/files.module';
 import { SupportTicketsController } from '../controllers/support-tickets.controller';
 import { SupportTicketsModule } from '@/application/use-cases/support-tickets/support-tickets.module';
+import { SupportTicketMessagesModule } from '@/application/use-cases/support-ticket-messages/support-ticket-messages.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { SupportTicketsModule } from '@/application/use-cases/support-tickets/su
     ActionLogsModule,
     FilesModule,
     SupportTicketsModule,
+    SupportTicketMessagesModule,
   ],
   controllers: [
     UsersController,
