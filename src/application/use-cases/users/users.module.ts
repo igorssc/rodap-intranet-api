@@ -7,7 +7,7 @@ import { DeleteUniqueUserService } from './delete-unique-user.service';
 import { FindAllUsersService } from './find-all-users.service';
 import { FindUniqueUserService } from './find-unique-user.service';
 import { UpdateUserService } from './update-user.service';
-import { ActionLogsModule } from '../actionLogs/action-logs.module';
+import { ActionLogsModule } from '../action-logs/action-logs.module';
 
 @Module({
   imports: [forwardRef(() => ActionLogsModule)],

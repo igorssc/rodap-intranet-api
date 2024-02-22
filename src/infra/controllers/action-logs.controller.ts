@@ -11,11 +11,11 @@ import { RolesAction, RolesSubject, User as UserProps } from '@prisma/client';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 import { User } from '../decorators/user.decorator';
 import { FindAllActionLogsDto } from '../dtos/action-logs/find-all-action-logs.dto';
-import { FindAllActionLogsService } from '@/application/useCases/actionLogs/find-all-action-logs.service';
-import { FindActionLogsByUserService } from '@/application/useCases/actionLogs/user/find-action-logs-by-user.service';
+import { FindAllActionLogsService } from '@/application/use-cases/action-logs/find-all-action-logs.service';
+import { FindActionLogsByUserService } from '@/application/use-cases/action-logs/user/find-action-logs-by-user.service';
 import { PoliciesGuard } from '../guards/policies.guard';
 import { CheckPolicies } from '../decorators/check-guard.decorator';
-import { FindUniqueUserService } from '@/application/useCases/users/find-unique-user.service';
+import { FindUniqueUserService } from '@/application/use-cases/users/find-unique-user.service';
 import { USER_NOT_FOUND } from '@/application/errors/errors.constants';
 
 @Controller('actions')

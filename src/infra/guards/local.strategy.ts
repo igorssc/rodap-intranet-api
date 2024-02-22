@@ -2,7 +2,7 @@ import {
   INVALID_CREDENTIALS,
   USER_IS_BLOCKED,
 } from '@/application/errors/errors.constants';
-import { ValidateUserService } from '@/application/useCases/auth/validate-user.service';
+import { ValidateUserService } from '@/application/use-cases/auth/validate-user.service';
 import {
   ForbiddenException,
   Injectable,

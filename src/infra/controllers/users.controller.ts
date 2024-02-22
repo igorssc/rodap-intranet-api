@@ -3,11 +3,11 @@ import {
   USER_NOT_FOUND,
 } from '@/application/errors/errors.constants';
 import { UserWithRoles } from '@/application/interfaces/user';
-import { CreateUserService } from '@/application/useCases/users/create-user.service';
-import { DeleteUniqueUserService } from '@/application/useCases/users/delete-unique-user.service';
-import { FindAllUsersService } from '@/application/useCases/users/find-all-users.service';
-import { FindUniqueUserService } from '@/application/useCases/users/find-unique-user.service';
-import { UpdateUserService } from '@/application/useCases/users/update-user.service';
+import { CreateUserService } from '@/application/use-cases/users/create-user.service';
+import { DeleteUniqueUserService } from '@/application/use-cases/users/delete-unique-user.service';
+import { FindAllUsersService } from '@/application/use-cases/users/find-all-users.service';
+import { FindUniqueUserService } from '@/application/use-cases/users/find-unique-user.service';
+import { UpdateUserService } from '@/application/use-cases/users/update-user.service';
 import { CreateUserDto } from '@/infra/dtos/users/create-user.dto';
 import { subject } from '@casl/ability';
 import {
@@ -33,14 +33,14 @@ import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 import { PoliciesGuard } from '../guards/policies.guard';
 import { FindAllUsersDto } from '../dtos/users/find-all-users.dto';
 import { User } from '../decorators/user.decorator';
-import { CreateUserLogService } from '@/application/useCases/actionLogs/user/create-user-logs.service';
-import { UpdateUserLogService } from '@/application/useCases/actionLogs/user/update-user-logs.service';
+import { CreateUserLogService } from '@/application/use-cases/action-logs/user/create-user-logs.service';
+import { UpdateUserLogService } from '@/application/use-cases/action-logs/user/update-user-logs.service';
 import { PrismaService } from '@/application/providers/prisma/prisma.service';
-import { DeleteUserLogService } from '@/application/useCases/actionLogs/user/delete-user-logs.service';
-import { UploadPictureProfileService } from '@/application/useCases/files/user/upload-picture-profile.service';
+import { DeleteUserLogService } from '@/application/use-cases/action-logs/user/delete-user-logs.service';
+import { UploadPictureProfileService } from '@/application/use-cases/files/user/upload-picture-profile.service';
 import { UpdateMeUserDto } from '../dtos/users/update-me-user.dto';
 import { PictureUploadInterceptor } from '../decorators/picture-upload-interceptor.decorator';
-import { UpdateMeLogService } from '@/application/useCases/actionLogs/user/update-me-logs.service';
+import { UpdateMeLogService } from '@/application/use-cases/action-logs/user/update-me-logs.service';
 
 @Controller('users')
 export class UsersController {

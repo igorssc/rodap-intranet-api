@@ -1,4 +1,4 @@
-import { AuthenticateModule } from '@/application/useCases/auth/authenticate.module';
+import { AuthenticateModule } from '@/application/use-cases/auth/authenticate.module';
 import { UsersModule } from '@/application/useCases/users/users.module';
 import { Module } from '@nestjs/common';
 import { PassportModule } from '@nestjs/passport';

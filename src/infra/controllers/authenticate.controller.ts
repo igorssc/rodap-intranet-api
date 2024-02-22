@@ -1,9 +1,9 @@
-import { LoginService } from '@/application/useCases/auth/login.service';
+import { LoginService } from '@/application/use-cases/auth/login.service';
 import { LocalAuthGuard } from '@/infra/guards/local-auth.guard';
 import { Controller, HttpCode, Post, UseGuards } from '@nestjs/common';
 import { User } from '../decorators/user.decorator';
 import { User as UserProps } from '@prisma/client';
-import { CreateActionLogService } from '@/application/useCases/actionLogs/create-action-logs.service';
+import { CreateActionLogService } from '@/application/use-cases/action-logs/create-action-logs.service';
 
 interface LoginResponse {
   access_token: string;

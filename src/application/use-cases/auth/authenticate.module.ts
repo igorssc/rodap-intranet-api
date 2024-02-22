@@ -4,7 +4,7 @@ import { UsersModule } from '../users/users.module';
 import { jwtConstants } from './constants';
 import { LoginService } from './login.service';
 import { ValidateUserService } from './validate-user.service';
-import { ActionLogsModule } from '../actionLogs/action-logs.module';
+import { ActionLogsModule } from '../action-logs/action-logs.module';
 
 @Module({
   imports: [
