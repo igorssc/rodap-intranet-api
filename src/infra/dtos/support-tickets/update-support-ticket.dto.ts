@@ -6,19 +6,22 @@ import {
   TITLE_STRING_MESSAGE,
 } from '@/application/errors/validations.constants';
 import { TicketStatus } from '@prisma/client';
-import { IsEnum, IsString, MinLength } from 'class-validator';
+import { IsEnum, IsOptional, IsString, MinLength } from 'class-validator';
 
 export abstract class UpdateSupportTicketDto {
   @IsString({ message: TITLE_STRING_MESSAGE })
   @MinLength(10, { message: MIN_TITLE_LENGTH_MESSAGE })
-  title: string;
+  @IsOptional()
+  title?: string;
 
   @IsString({ message: DESCRIPTION_STRING_MESSAGE })
   @MinLength(20, { message: MIN_DESCRIPTION_LENGTH_MESSAGE })
-  description: string;
+  @IsOptional()
+  description?: string;
 
   @IsEnum(TicketStatus, {
     message: STATUS_TYPE_VALID_MESSAGE,
   })
-  status: TicketStatus;
+  @IsOptional()
+  status?: TicketStatus;
 }
