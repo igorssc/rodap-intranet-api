@@ -20,6 +20,8 @@ import { CreateSupportTicketDto } from '../dtos/support-tickets/create-support-t
 import { User } from '../decorators/user.decorator';
 import { User as UserProps } from '@prisma/client';
 import { FindAllSupportTicketsDto } from '../dtos/support-tickets/find-all-support-tickets.dto';
+import { FindAllSupportTicketsByCreatorDto } from '../dtos/support-tickets/find-all-support-tickets-by-creator.dto';
+import { FindAllSupportTicketsByResponsibleDto } from '../dtos/support-tickets/find-all-support-tickets-by-responsible.dto';
 
 @Controller('support-tickets')
 export class SupportTicketsController {
@@ -33,14 +35,43 @@ export class SupportTicketsController {
   ) {}
 
   @Get()
-  @HttpCode(201)
   @UseGuards(JwtAuthGuard)
-  async findAll(@Query() query: FindAllSupportTicketsDto) {
+  async findAllSupportTickets(@Query() query: FindAllSupportTicketsDto) {
     const { page, limit } = query;
 
     return await this.findAllSupportTicketsService.execute({
       page,
       limit,
+    });
+  }
+
+  @Get('creator/:creatorId')
+  @UseGuards(JwtAuthGuard)
+  async findAllSupportTicketsByCreator(
+    @Param('creatorId') creatorId: string,
+    @Query() query: FindAllSupportTicketsByCreatorDto,
+  ) {
+    const { page, limit } = query;
+
+    return await this.findAllSupportTicketsByCreatorService.execute({
+      page,
+      limit,
+      creatorId,
+    });
+  }
+
+  @Get('responsible/:responsibleId')
+  @UseGuards(JwtAuthGuard)
+  async findAllSupportTicketsByResponsible(
+    @Param('responsibleId') responsibleId: string,
+    @Query() query: FindAllSupportTicketsByResponsibleDto,
+  ) {
+    const { page, limit } = query;
+
+    return await this.findAllSupportTicketsByResponsibleService.execute({
+      page,
+      limit,
+      responsibleId,
     });
   }
 

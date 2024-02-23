@@ -6,6 +6,7 @@ import { DeleteUniqueSupportTicketService } from './delete-unique-support-ticket
 import { FindAllSupportTicketsByCreatorService } from './find-all-support-tickets-by-creator.service';
 import { FindAllSupportTicketsByResponsibleService } from './find-all-support-tickets-by-responsible.service';
 import { FindAllSupportTicketsService } from './find-all-support-tickets.service';
+import { PrismaService } from '@/application/providers/prisma/prisma.service';
 
 @Module({
   imports: [],
@@ -15,6 +16,7 @@ import { FindAllSupportTicketsService } from './find-all-support-tickets.service
     FindAllSupportTicketsByCreatorService,
     FindAllSupportTicketsByResponsibleService,
     FindAllSupportTicketsService,
+    PrismaService,
     {
       provide: SupportTicketsRepository,
       useClass: PrismaSupportTicketsRepository,

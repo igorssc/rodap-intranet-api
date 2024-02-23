@@ -36,6 +36,22 @@ export class InMemorySupportTicketsRepository
     return this.items.length;
   }
 
+  async totalCreatorCount(creatorId: string) {
+    const filteredItems = this.items.filter(
+      (action) => action.creator_id === creatorId,
+    );
+
+    return filteredItems.length;
+  }
+
+  async totalResponsibleCount(responsibleId: string) {
+    const filteredItems = this.items.filter(
+      (action) => action.responsible_id === responsibleId,
+    );
+
+    return filteredItems.length;
+  }
+
   async findAll({ page, pageSize }: FindAllProps) {
     const filteredItems = this.items;
 

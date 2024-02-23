@@ -36,6 +36,18 @@ export class PrismaSupportTicketsRepository
     return await this.prisma.supportTicket.count();
   }
 
+  async totalCreatorCount(creatorId: string) {
+    return await this.prisma.supportTicket.count({
+      where: { creator_id: creatorId },
+    });
+  }
+
+  async totalResponsibleCount(responsibleId: string) {
+    return await this.prisma.supportTicket.count({
+      where: { responsible_id: responsibleId },
+    });
+  }
+
   async findAll({ page, pageSize }: FindAllProps) {
     const data = await this.prisma.supportTicket.findMany({
       orderBy: { created_at: 'desc' },
