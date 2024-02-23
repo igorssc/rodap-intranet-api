@@ -2,7 +2,7 @@ import { PaginatedData } from '../interfaces/pagination';
 
 type PaginationProps<T> = {
   data: T[];
-  totalCount: number;
+  totalCount?: number;
   page: number;
   pageSize: number;
 };

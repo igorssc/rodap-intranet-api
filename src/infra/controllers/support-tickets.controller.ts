@@ -23,6 +23,8 @@ import { FindAllSupportTicketsDto } from '../dtos/support-tickets/find-all-suppo
 import { FindAllSupportTicketsByCreatorDto } from '../dtos/support-tickets/find-all-support-tickets-by-creator.dto';
 import { FindAllSupportTicketsByResponsibleDto } from '../dtos/support-tickets/find-all-support-tickets-by-responsible.dto';
 import { CreateSupportTicketMessageDto } from '../dtos/support-tickets/create-support-ticket-message.dto';
+import { FindAllSupportTicketMessagesByCreatorDto } from '../dtos/support-tickets/find-all-support-ticket-messages-by-creator.dto';
+import { FindAllMessagesBySupportTicketService } from '@/application/use-cases/support-ticket-messages/find-all-messages-by-support-ticket.service';
 
 @Controller('support-tickets')
 export class SupportTicketsController {
@@ -33,6 +35,7 @@ export class SupportTicketsController {
     private findAllSupportTicketsByCreatorService: FindAllSupportTicketsByCreatorService,
     private findAllSupportTicketsByResponsibleService: FindAllSupportTicketsByResponsibleService,
     private findAllSupportTicketsService: FindAllSupportTicketsService,
+    private findAllMessagesBySupportTicketService: FindAllMessagesBySupportTicketService,
   ) {}
 
   @Get()
@@ -76,6 +79,21 @@ export class SupportTicketsController {
     });
   }
 
+  @Get('message/:ticketId')
+  @UseGuards(JwtAuthGuard)
+  async findAllSupportTicketMessagesByTicket(
+    @Param('ticketId') ticketId: string,
+    @Query() query: FindAllSupportTicketMessagesByCreatorDto,
+  ) {
+    const { page, limit } = query;
+
+    return await this.findAllMessagesBySupportTicketService.execute({
+      page,
+      limit,
+      ticketId,
+    });
+  }
+
   @Post()
   @HttpCode(201)
   @UseGuards(JwtAuthGuard)
@@ -92,7 +110,7 @@ export class SupportTicketsController {
     return supportTicket;
   }
 
-  @Post(':ticketId/message')
+  @Post('message/:ticketId')
   @HttpCode(201)
   @UseGuards(JwtAuthGuard)
   async createSupportTicketMessage(
