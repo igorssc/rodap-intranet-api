@@ -2,7 +2,7 @@ import { SupportTicketsRepository } from '@/application/repositories/support-tic
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
-export class CreateMessageFromSupportTicketService {
+export class FindAllMessagesByTicketService {
   constructor(private supportTicketRepository: SupportTicketsRepository) {}
 
   async execute() {

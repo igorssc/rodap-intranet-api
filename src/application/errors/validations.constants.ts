@@ -4,6 +4,10 @@ export const VALID_PASSWORD_MESSAGE = 'A senha deve ser válida.';
 
 export const NAME_STRING_MESSAGE = 'O nome deve ser uma string.';
 
+export const TITLE_STRING_MESSAGE = 'O título deve ser uma string.';
+
+export const DESCRIPTION_STRING_MESSAGE = 'O título deve ser uma string.';
+
 export const NAME_NOT_EMPTY_MESSAGE = 'O nome não pode estar vazio.';
 
 export const MIN_NAME_LENGTH_MESSAGE =
@@ -15,6 +19,11 @@ export const PASSWORD_STRING_MESSAGE = 'A senha deve ser uma string.';
 
 export const MIN_PASSWORD_LENGTH_MESSAGE =
   'A senha deve ter no mínimo 6 caracteres.';
+
+export const MIN_TITLE_LENGTH_MESSAGE = 'O título deve ter no mínimo 10';
+
+export const MIN_DESCRIPTION_LENGTH_MESSAGE =
+  'A descrição deve ter no mínimo 20 caracteres.';
 
 export const IS_ADMIN_BOOLEAN_MESSAGE =
   'O valor de is_admin deve ser um booleano.';
