@@ -11,6 +11,7 @@ import {
   Get,
   HttpCode,
   Param,
+  Patch,
   Post,
   Query,
   UseGuards,
@@ -25,6 +26,8 @@ import { FindAllSupportTicketsByResponsibleDto } from '../dtos/support-tickets/f
 import { CreateSupportTicketMessageDto } from '../dtos/support-tickets/create-support-ticket-message.dto';
 import { FindAllSupportTicketMessagesByCreatorDto } from '../dtos/support-tickets/find-all-support-ticket-messages-by-creator.dto';
 import { FindAllMessagesBySupportTicketService } from '@/application/use-cases/support-ticket-messages/find-all-messages-by-support-ticket.service';
+import { UpdateSupportTicketDto } from '../dtos/support-tickets/update-support-ticket.dto';
+import { UpdateSupportTicketService } from '@/application/use-cases/support-tickets/update-support-ticket.service';
 
 @Controller('support-tickets')
 export class SupportTicketsController {
@@ -36,6 +39,7 @@ export class SupportTicketsController {
     private findAllSupportTicketsByResponsibleService: FindAllSupportTicketsByResponsibleService,
     private findAllSupportTicketsService: FindAllSupportTicketsService,
     private findAllMessagesBySupportTicketService: FindAllMessagesBySupportTicketService,
+    private updateSupportTicketService: UpdateSupportTicketService,
   ) {}
 
   @Get()
@@ -126,6 +130,28 @@ export class SupportTicketsController {
       });
 
     return messageSupportTicket;
+  }
+
+  @Patch(':ticketId')
+  @UseGuards(JwtAuthGuard)
+  async update(
+    @Param('ticketId') ticketId: string,
+    @Body() body: UpdateSupportTicketDto,
+  ) {
+    // const { user: userToBeChanged } = await this.findUniqueUserService.execute(
+    //   ticketId,
+    // );
+
+    // if (!userToBeChanged) {
+    //   throw new BadRequestException(USER_NOT_FOUND);
+    // }
+
+    const { supportTicket } = await this.updateSupportTicketService.execute(
+      ticketId,
+      body,
+    );
+
+    return supportTicket;
   }
 
   @Delete(':ticketId')

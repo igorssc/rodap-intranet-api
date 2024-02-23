@@ -34,6 +34,8 @@ export const IS_ACTIVE_BOOLEAN_MESSAGE =
 export const ACTION_TYPE_VALID_MESSAGE =
   'O tipo de ação deve ser um valor válido.';
 
+export const STATUS_TYPE_VALID_MESSAGE = 'O status deve ter um valor válido.';
+
 export const ACTION_DATA_OBJECT_MESSAGE =
   'Os dados da ação devem ser um valor válido.';
 
