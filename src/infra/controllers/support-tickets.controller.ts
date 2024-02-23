@@ -8,15 +8,18 @@ import {
   Body,
   Controller,
   Delete,
+  Get,
   HttpCode,
   Param,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 import { CreateSupportTicketDto } from '../dtos/support-tickets/create-support-ticket.dto';
 import { User } from '../decorators/user.decorator';
 import { User as UserProps } from '@prisma/client';
+import { FindAllSupportTicketsDto } from '../dtos/support-tickets/find-all-support-tickets.dto';
 
 @Controller('support-tickets')
 export class SupportTicketsController {
@@ -28,6 +31,18 @@ export class SupportTicketsController {
     private findAllSupportTicketsByResponsibleService: FindAllSupportTicketsByResponsibleService,
     private findAllSupportTicketsService: FindAllSupportTicketsService,
   ) {}
+
+  @Get()
+  @HttpCode(201)
+  @UseGuards(JwtAuthGuard)
+  async findAll(@Query() query: FindAllSupportTicketsDto) {
+    const { page, limit } = query;
+
+    return await this.findAllSupportTicketsService.execute({
+      page,
+      limit,
+    });
+  }
 
   @Post()
   @HttpCode(201)
@@ -47,10 +62,7 @@ export class SupportTicketsController {
 
   @Delete(':ticketId')
   @UseGuards(JwtAuthGuard)
-  async deleteUnique(
-    @Param('ticketId') ticketId: string,
-    @User() user: UserProps,
-  ) {
+  async deleteUnique(@Param('ticketId') ticketId: string) {
     await this.deleteUniqueSupportTicketService.execute(ticketId);
   }
 }
