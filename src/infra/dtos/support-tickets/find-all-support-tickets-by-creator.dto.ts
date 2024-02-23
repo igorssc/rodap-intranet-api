@@ -7,7 +7,7 @@ import {
   PAGE_INT_MESSAGE,
 } from '@/application/errors/validations.constants';
 
-export abstract class FindAllSupportTicketsDto {
+export abstract class FindAllSupportTicketsByCreatorDto {
   @IsOptional()
   @IsInt({ message: PAGE_INT_MESSAGE })
   @Min(1, { message: MIN_PAGE_VALUE_MESSAGE })

@@ -22,6 +22,7 @@ import { User as UserProps } from '@prisma/client';
 import { FindAllSupportTicketsDto } from '../dtos/support-tickets/find-all-support-tickets.dto';
 import { FindAllSupportTicketsByCreatorDto } from '../dtos/support-tickets/find-all-support-tickets-by-creator.dto';
 import { FindAllSupportTicketsByResponsibleDto } from '../dtos/support-tickets/find-all-support-tickets-by-responsible.dto';
+import { CreateSupportTicketMessageDto } from '../dtos/support-tickets/create-support-ticket-message.dto';
 
 @Controller('support-tickets')
 export class SupportTicketsController {
@@ -89,6 +90,24 @@ export class SupportTicketsController {
     });
 
     return supportTicket;
+  }
+
+  @Post(':ticketId/message')
+  @HttpCode(201)
+  @UseGuards(JwtAuthGuard)
+  async createSupportTicketMessage(
+    @Body() body: CreateSupportTicketMessageDto,
+    @Param('ticketId') ticketId: string,
+    @User() user: UserProps,
+  ) {
+    const { messageSupportTicket } =
+      await this.createMessageFromSupportTicketService.execute({
+        ticketId,
+        senderId: user.id,
+        message: body.message,
+      });
+
+    return messageSupportTicket;
   }
 
   @Delete(':ticketId')

@@ -40,4 +40,8 @@ export abstract class SupportTicketsRepository {
   findById: (id: string) => Promise<SupportTicket>;
 
   deleteUnique: (ticketId: string) => Promise<SupportTicket>;
+
+  totalCreatorCount: (creatorId: string) => Promise<number>;
+
+  totalResponsibleCount: (responsibleId: string) => Promise<number>;
 }
