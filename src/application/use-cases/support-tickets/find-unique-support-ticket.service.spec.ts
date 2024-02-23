@@ -37,6 +37,6 @@ describe('Find Unique Support Ticket Use Case', () => {
 
     expect(supportTicket.title).toBe('Ticket of test 01');
     expect(supportTicket.status).toBe('OPEN');
-    expect(supportTicket.id).toBe(userId);
+    expect(supportTicket.creator_id).toBe(userId);
   });
 });

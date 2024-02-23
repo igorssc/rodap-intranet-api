@@ -16,7 +16,7 @@ export class FindAllSupportTicketsService {
   async execute({
     limit = 10,
     page = 1,
-  }: FindAllSupportTicketsServiceExecuteProps): Promise<
+  }: FindAllSupportTicketsServiceExecuteProps = {}): Promise<
     PaginatedData<SupportTicket>
   > {
     const data = await this.supportTicketRepository.findAll({
