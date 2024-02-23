@@ -19,7 +19,6 @@ export class InMemorySupportTicketsRepository
       id: randomUUID(),
       attachment: ticket.attachment,
       creator_id: ticket.creator.connect.id,
-      responsible_id: ticket.responsible.connect.id,
       description: ticket.description,
       status: TicketStatus.OPEN,
       ticket_number: this.items.length + 1,
