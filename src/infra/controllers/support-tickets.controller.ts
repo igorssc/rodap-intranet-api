@@ -4,7 +4,15 @@ import { DeleteUniqueSupportTicketService } from '@/application/use-cases/suppor
 import { FindAllSupportTicketsByCreatorService } from '@/application/use-cases/support-tickets/find-all-support-tickets-by-creator.service';
 import { FindAllSupportTicketsByResponsibleService } from '@/application/use-cases/support-tickets/find-all-support-tickets-by-responsible.service';
 import { FindAllSupportTicketsService } from '@/application/use-cases/support-tickets/find-all-support-tickets.service';
-import { Body, Controller, HttpCode, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  HttpCode,
+  Param,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 import { CreateSupportTicketDto } from '../dtos/support-tickets/create-support-ticket.dto';
 import { User } from '../decorators/user.decorator';
@@ -35,5 +43,14 @@ export class SupportTicketsController {
     });
 
     return supportTicket;
+  }
+
+  @Delete(':ticketId')
+  @UseGuards(JwtAuthGuard)
+  async deleteUnique(
+    @Param('ticketId') ticketId: string,
+    @User() user: UserProps,
+  ) {
+    await this.deleteUniqueSupportTicketService.execute(ticketId);
   }
 }
