@@ -4,3 +4,4 @@ export const INVALID_PARAMS = 'Parâmetros inválidos.';
 export const USER_ALREADY_EXISTS = 'Usuário já existe.';
 export const USER_NOT_FOUND = 'Usuário não encontrado.';
 export const USER_IS_BLOCKED = 'Usuário está bloqueado.';
+export const SUPPORT_TICKET_NOT_FOUND = 'Ticket de suporte não encontrado.';

@@ -5,6 +5,7 @@ import { FindAllSupportTicketsByCreatorService } from '@/application/use-cases/s
 import { FindAllSupportTicketsByResponsibleService } from '@/application/use-cases/support-tickets/find-all-support-tickets-by-responsible.service';
 import { FindAllSupportTicketsService } from '@/application/use-cases/support-tickets/find-all-support-tickets.service';
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -28,6 +29,8 @@ import { FindAllSupportTicketMessagesByCreatorDto } from '../dtos/support-ticket
 import { FindAllMessagesBySupportTicketService } from '@/application/use-cases/support-ticket-messages/find-all-messages-by-support-ticket.service';
 import { UpdateSupportTicketDto } from '../dtos/support-tickets/update-support-ticket.dto';
 import { UpdateSupportTicketService } from '@/application/use-cases/support-tickets/update-support-ticket.service';
+import { FindUniqueSupportTicketService } from '@/application/use-cases/support-tickets/find-unique-support-ticket.service';
+import { SUPPORT_TICKET_NOT_FOUND } from '@/application/errors/errors.constants';
 
 @Controller('support-tickets')
 export class SupportTicketsController {
@@ -40,6 +43,7 @@ export class SupportTicketsController {
     private findAllSupportTicketsService: FindAllSupportTicketsService,
     private findAllMessagesBySupportTicketService: FindAllMessagesBySupportTicketService,
     private updateSupportTicketService: UpdateSupportTicketService,
+    private findUniqueSupportTicketService: FindUniqueSupportTicketService,
   ) {}
 
   @Get()
@@ -51,6 +55,16 @@ export class SupportTicketsController {
       page,
       limit,
     });
+  }
+
+  @Get(':ticketId')
+  @UseGuards(JwtAuthGuard)
+  async findUniqueSupportTicket(@Param('ticketId') ticketId: string) {
+    const { supportTicket } = await this.findUniqueSupportTicketService.execute(
+      ticketId,
+    );
+
+    return supportTicket;
   }
 
   @Get('creator/:creatorId')
@@ -138,13 +152,12 @@ export class SupportTicketsController {
     @Param('ticketId') ticketId: string,
     @Body() body: UpdateSupportTicketDto,
   ) {
-    // const { user: userToBeChanged } = await this.findUniqueUserService.execute(
-    //   ticketId,
-    // );
+    const { supportTicket: currentSupportTicket } =
+      await this.findUniqueSupportTicketService.execute(ticketId);
 
-    // if (!userToBeChanged) {
-    //   throw new BadRequestException(USER_NOT_FOUND);
-    // }
+    if (!currentSupportTicket) {
+      throw new BadRequestException(SUPPORT_TICKET_NOT_FOUND);
+    }
 
     const { supportTicket } = await this.updateSupportTicketService.execute(
       ticketId,
