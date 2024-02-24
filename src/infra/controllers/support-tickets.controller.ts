@@ -209,7 +209,7 @@ export class SupportTicketsController {
       ),
     );
 
-    if (!isAllowed && user.id === currentSupportTicket.creator_id) {
+    if (!isAllowed && user.id !== currentSupportTicket.creator_id) {
       throw new ForbiddenException(INVALID_PERMISSION);
     }
 

@@ -47,7 +47,6 @@ export class UsersController {
     private findUniqueUserService: FindUniqueUserService,
     private updateUserService: UpdateUserService,
     private deleteUniqueUserService: DeleteUniqueUserService,
-
     private createUserLogService: CreateUserLogService,
     private updateUserLogService: UpdateUserLogService,
     private deleteUserLogService: DeleteUserLogService,
