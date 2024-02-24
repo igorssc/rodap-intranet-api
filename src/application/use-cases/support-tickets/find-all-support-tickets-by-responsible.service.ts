@@ -3,7 +3,7 @@ import { pagination } from '@/application/utils/pagination';
 import { Injectable } from '@nestjs/common';
 
 interface FindAllSupportTicketsByResponsibleServiceExecuteProps {
-  responsibleId?: string;
+  responsibleId: string;
   page?: number;
   limit?: number;
 }

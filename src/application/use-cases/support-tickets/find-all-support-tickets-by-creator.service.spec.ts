@@ -3,16 +3,16 @@ import { beforeEach, describe, expect, it } from 'vitest';
 import { SupportTicketsRepository } from '@/application/repositories/support-tickets.repository';
 import { InMemorySupportTicketsRepository } from '@/application/repositories/implementations/in-memory-support-tickets.repository';
 import { randomUUID } from 'crypto';
-import { FindAllSupportTicketsService } from './find-all-support-tickets.service';
+import { FindAllSupportTicketsByCreatorService } from './find-all-support-tickets-by-creator.service';
 
-describe('Find All Support Tickets Use Case', () => {
-  let sut: FindAllSupportTicketsService;
+describe('Find All Support Tickets By Creator Use Case', () => {
+  let sut: FindAllSupportTicketsByCreatorService;
   let supportTicketsRepository: SupportTicketsRepository;
 
   beforeEach(async () => {
     const moduleRef: TestingModule = await Test.createTestingModule({
       providers: [
-        FindAllSupportTicketsService,
+        FindAllSupportTicketsByCreatorService,
         {
           provide: SupportTicketsRepository,
           useClass: InMemorySupportTicketsRepository,
@@ -20,29 +20,32 @@ describe('Find All Support Tickets Use Case', () => {
       ],
     }).compile();
 
-    sut = moduleRef.get(FindAllSupportTicketsService);
+    sut = moduleRef.get(FindAllSupportTicketsByCreatorService);
     supportTicketsRepository = moduleRef.get(SupportTicketsRepository);
   });
 
-  it('should be able to find all support tickets', async () => {
-    const creatorId = randomUUID();
+  it('should be able to find all support tickets by creator', async () => {
+    const creatorOneId = randomUUID();
+    const creatorTwoId = randomUUID();
 
     await supportTicketsRepository.create({
       title: 'Ticket of test 01',
       description: 'Description of support ticket 01',
-      creator: { connect: { id: creatorId } },
+      creator: { connect: { id: creatorOneId } },
     });
 
     await supportTicketsRepository.create({
       title: 'Ticket of test 02',
       description: 'Description of support ticket 02',
-      creator: { connect: { id: creatorId } },
+      creator: { connect: { id: creatorTwoId } },
     });
 
-    const supportTicketList = await sut.execute();
+    const supportTicketList = await sut.execute({
+      creatorId: creatorOneId,
+    });
 
     const expectedResult = {
-      totalDocs: 2,
+      totalDocs: 1,
       limit: 10,
       totalPages: 1,
       page: 1,
@@ -57,10 +60,9 @@ describe('Find All Support Tickets Use Case', () => {
     );
 
     expect(supportTicketList.data[0]?.title).toBe('Ticket of test 01');
-    expect(supportTicketList.data[1]?.title).toBe('Ticket of test 02');
   });
 
-  it('should be able to find all a support tickets on another page', async () => {
+  it('should be able to find all a support tickets by creator on another page', async () => {
     const creatorId = randomUUID();
 
     await supportTicketsRepository.create({
@@ -75,7 +77,11 @@ describe('Find All Support Tickets Use Case', () => {
       creator: { connect: { id: creatorId } },
     });
 
-    const supportTicketList = await sut.execute({ limit: 1, page: 2 });
+    const supportTicketList = await sut.execute({
+      creatorId,
+      limit: 1,
+      page: 2,
+    });
 
     const expectedResult = {
       totalDocs: 2,

@@ -25,18 +25,18 @@ describe('Find Unique Support Ticket Use Case', () => {
   });
 
   it('should be able to find support ticket by id', async () => {
-    const userId = randomUUID();
+    const creatorId = randomUUID();
 
     const supportTicket = await supportTicketsRepository.create({
       title: 'Ticket of test 01',
       description: 'Description of support ticket 01',
-      creator: { connect: { id: userId } },
+      creator: { connect: { id: creatorId } },
     });
 
     await sut.execute(supportTicket.id);
 
     expect(supportTicket.title).toBe('Ticket of test 01');
     expect(supportTicket.status).toBe('OPEN');
-    expect(supportTicket.creator_id).toBe(userId);
+    expect(supportTicket.creator_id).toBe(creatorId);
   });
 });

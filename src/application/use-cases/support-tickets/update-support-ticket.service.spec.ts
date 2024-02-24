@@ -26,12 +26,12 @@ describe('Update Support Ticket Use Case', () => {
   });
 
   it('should be able to update support ticket', async () => {
-    const userId = randomUUID();
+    const creatorId = randomUUID();
 
     const supportTicket = await supportTicketsRepository.create({
       title: 'Ticket of test 01',
       description: 'Description of support ticket 01',
-      creator: { connect: { id: userId } },
+      creator: { connect: { id: creatorId } },
     });
 
     expect(supportTicket.status).toBe('OPEN');

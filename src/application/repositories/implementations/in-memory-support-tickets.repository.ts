@@ -62,7 +62,10 @@ export class InMemorySupportTicketsRepository
     return data;
   }
 
-  async update(ticketId: string, ticket: Prisma.SupportTicketUpdateInput) {
+  async update(
+    ticketId: string,
+    { responsible, ...ticket }: Prisma.SupportTicketUpdateInput,
+  ) {
     const ticketIndex = this.items.findIndex((item) => item.id === ticketId);
 
     if (ticketIndex < 0) {
@@ -70,6 +73,12 @@ export class InMemorySupportTicketsRepository
     }
 
     Object.assign(this.items[ticketIndex], ticket);
+
+    if (responsible) {
+      Object.assign(this.items[ticketIndex], {
+        responsible_id: responsible.connect.id,
+      });
+    }
 
     return { ...this.items[ticketIndex] };
   }
