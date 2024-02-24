@@ -2,14 +2,12 @@ import {
   INVALID_PERMISSION,
   USER_NOT_FOUND,
 } from '@/application/errors/errors.constants';
-import { UserWithRoles } from '@/application/interfaces/user';
 import { CreateUserService } from '@/application/use-cases/users/create-user.service';
 import { DeleteUniqueUserService } from '@/application/use-cases/users/delete-unique-user.service';
 import { FindAllUsersService } from '@/application/use-cases/users/find-all-users.service';
 import { FindUniqueUserService } from '@/application/use-cases/users/find-unique-user.service';
 import { UpdateUserService } from '@/application/use-cases/users/update-user.service';
 import { CreateUserDto } from '@/infra/dtos/users/create-user.dto';
-import { subject } from '@casl/ability';
 import {
   BadRequestException,
   Body,
@@ -217,10 +215,6 @@ export class UsersController {
   @UseGuards(JwtAuthGuard, PoliciesGuard)
   @CheckPolicies(RolesAction.DELETE, RolesSubject.USER)
   async deleteUnique(@Param('userId') userId: string, @User() user: UserProps) {
-    const ability = this.caslAbilityFactory.createForUser(
-      subject(RolesSubject.USER, user as UserWithRoles),
-    );
-
     const { user: userToBeDeleted } = await this.findUniqueUserService.execute(
       userId,
     );
@@ -229,12 +223,7 @@ export class UsersController {
       throw new BadRequestException(USER_NOT_FOUND);
     }
 
-    const isAllowed = ability.can(
-      RolesAction.DELETE,
-      subject(RolesSubject.USER, userToBeDeleted as UserWithRoles),
-    );
-
-    if (!isAllowed || user.id === userToBeDeleted.id) {
+    if (user.id === userToBeDeleted.id) {
       throw new ForbiddenException(INVALID_PERMISSION);
     }
 
