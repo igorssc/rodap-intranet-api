@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Prisma, SupportTicket, TicketStatus } from '@prisma/client';
+import { Prisma, SupportTicket, SupportTicketStatus } from '@prisma/client';
 import {
   FindAllByCreatorUserProps,
   FindAllByResponsibleUserProps,
@@ -20,7 +20,7 @@ export class InMemorySupportTicketsRepository
       attachment: ticket.attachment,
       creator_id: ticket.creator.connect.id,
       description: ticket.description,
-      status: TicketStatus.OPEN,
+      status: SupportTicketStatus.OPEN,
       ticket_number: this.items.length + 1,
       title: ticket.title,
       created_at: new Date(),

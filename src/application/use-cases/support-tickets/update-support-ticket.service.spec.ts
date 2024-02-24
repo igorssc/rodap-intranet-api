@@ -4,7 +4,7 @@ import { SupportTicketsRepository } from '@/application/repositories/support-tic
 import { InMemorySupportTicketsRepository } from '@/application/repositories/implementations/in-memory-support-tickets.repository';
 import { randomUUID } from 'crypto';
 import { UpdateSupportTicketService } from './update-support-ticket.service';
-import { TicketStatus } from '@prisma/client';
+import { SupportTicketStatus } from '@prisma/client';
 
 describe('Update Support Ticket Use Case', () => {
   let sut: UpdateSupportTicketService;
@@ -39,7 +39,7 @@ describe('Update Support Ticket Use Case', () => {
 
     await sut.execute(supportTicket.id, {
       title: 'Ticket of test',
-      status: TicketStatus.PROGRESS,
+      status: SupportTicketStatus.PROGRESS,
     });
 
     const findSupportTickets = await supportTicketsRepository.findById(

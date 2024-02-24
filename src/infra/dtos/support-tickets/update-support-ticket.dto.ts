@@ -5,7 +5,7 @@ import {
   STATUS_TYPE_VALID_MESSAGE,
   TITLE_STRING_MESSAGE,
 } from '@/application/errors/validations.constants';
-import { TicketStatus } from '@prisma/client';
+import { SupportTicketStatus } from '@prisma/client';
 import { IsEnum, IsOptional, IsString, MinLength } from 'class-validator';
 
 export abstract class UpdateSupportTicketDto {
@@ -19,9 +19,9 @@ export abstract class UpdateSupportTicketDto {
   @IsOptional()
   description?: string;
 
-  @IsEnum(TicketStatus, {
+  @IsEnum(SupportTicketStatus, {
     message: STATUS_TYPE_VALID_MESSAGE,
   })
   @IsOptional()
-  status?: TicketStatus;
+  status?: SupportTicketStatus;
 }

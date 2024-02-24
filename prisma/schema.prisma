@@ -12,6 +12,7 @@ datasource db {
 
 enum RolesSubject {
   USER
+  SUPPORT_TICKET
 }
 
 enum RolesAction {
@@ -28,15 +29,22 @@ enum ActionLogType {
   UPDATE_USER
   UPDATE_PROFILE
   DELETE_USER
-  CREATE_TICKET
-  UPDATE_TICKET
-  DELETE_TICKET
+  CREATE_SUPPORT_TICKET
+  UPDATE_SUPPORT_TICKET
+  DELETE_SUPPORT_TICKET
 }
 
-enum TicketStatus {
+enum SupportTicketStatus {
   OPEN
   CLOSED
   PROGRESS
+}
+
+enum SupportTicketPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
 }
 
 model User {
@@ -82,13 +90,14 @@ model ActionLog {
 }
 
 model SupportTicket {
-  id            String       @id @default(uuid())
-  ticket_number Int          @default(autoincrement())
+  id            String                @id @default(uuid())
+  ticket_number Int                   @default(autoincrement())
   title         String
   description   String?
   attachment    String?
-  status        TicketStatus @default(OPEN)
-  created_at    DateTime     @default(now())
+  status        SupportTicketStatus   @default(OPEN)
+  created_at    DateTime              @default(now())
+  priority      SupportTicketPriority @default(LOW)
 
   messages SupportTicketMessage[]
 
