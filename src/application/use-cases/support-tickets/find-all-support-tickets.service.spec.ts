@@ -39,7 +39,7 @@ describe('Find All Support Tickets Use Case', () => {
       creator: { connect: { id: creatorId } },
     });
 
-    const supportTicketList = await sut.execute();
+    const supportTicketsList = await sut.execute();
 
     const expectedResult = {
       totalDocs: 2,
@@ -53,11 +53,11 @@ describe('Find All Support Tickets Use Case', () => {
     };
 
     Object.keys(expectedResult).forEach((key) =>
-      expect(supportTicketList[key]).toBe(expectedResult[key]),
+      expect(supportTicketsList[key]).toBe(expectedResult[key]),
     );
 
-    expect(supportTicketList.data[0]?.title).toBe('Ticket of test 01');
-    expect(supportTicketList.data[1]?.title).toBe('Ticket of test 02');
+    expect(supportTicketsList.data[0]?.title).toBe('Ticket of test 01');
+    expect(supportTicketsList.data[1]?.title).toBe('Ticket of test 02');
   });
 
   it('should be able to find all a support tickets on another page', async () => {
@@ -75,7 +75,7 @@ describe('Find All Support Tickets Use Case', () => {
       creator: { connect: { id: creatorId } },
     });
 
-    const supportTicketList = await sut.execute({ limit: 1, page: 2 });
+    const supportTicketsList = await sut.execute({ limit: 1, page: 2 });
 
     const expectedResult = {
       totalDocs: 2,
@@ -89,9 +89,9 @@ describe('Find All Support Tickets Use Case', () => {
     };
 
     Object.keys(expectedResult).forEach((key) =>
-      expect(supportTicketList[key]).toBe(expectedResult[key]),
+      expect(supportTicketsList[key]).toBe(expectedResult[key]),
     );
 
-    expect(supportTicketList.data[0]?.title).toBe('Ticket of test 02');
+    expect(supportTicketsList.data[0]?.title).toBe('Ticket of test 02');
   });
 });

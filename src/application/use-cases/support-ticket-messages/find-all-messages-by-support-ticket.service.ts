@@ -2,7 +2,7 @@ import { SupportTicketMessagesRepository } from '@/application/repositories/supp
 import { Injectable } from '@nestjs/common';
 
 interface FindAllMessagesByTicketServiceExecuteProps {
-  ticketId?: string;
+  ticketId: string;
   page?: number;
   limit?: number;
 }
@@ -27,7 +27,7 @@ export class FindAllMessagesBySupportTicketService {
     const dataPaginated = {
       data,
       page,
-      pageSize: limit,
+      limit,
     };
 
     return dataPaginated;

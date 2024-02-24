@@ -40,7 +40,7 @@ describe('Find All Support Tickets By Creator Use Case', () => {
       creator: { connect: { id: creatorTwoId } },
     });
 
-    const supportTicketList = await sut.execute({
+    const supportTicketsList = await sut.execute({
       creatorId: creatorOneId,
     });
 
@@ -56,10 +56,10 @@ describe('Find All Support Tickets By Creator Use Case', () => {
     };
 
     Object.keys(expectedResult).forEach((key) =>
-      expect(supportTicketList[key]).toBe(expectedResult[key]),
+      expect(supportTicketsList[key]).toBe(expectedResult[key]),
     );
 
-    expect(supportTicketList.data[0]?.title).toBe('Ticket of test 01');
+    expect(supportTicketsList.data[0]?.title).toBe('Ticket of test 01');
   });
 
   it('should be able to find all a support tickets by creator on another page', async () => {
@@ -77,7 +77,7 @@ describe('Find All Support Tickets By Creator Use Case', () => {
       creator: { connect: { id: creatorId } },
     });
 
-    const supportTicketList = await sut.execute({
+    const supportTicketsList = await sut.execute({
       creatorId,
       limit: 1,
       page: 2,
@@ -95,9 +95,9 @@ describe('Find All Support Tickets By Creator Use Case', () => {
     };
 
     Object.keys(expectedResult).forEach((key) =>
-      expect(supportTicketList[key]).toBe(expectedResult[key]),
+      expect(supportTicketsList[key]).toBe(expectedResult[key]),
     );
 
-    expect(supportTicketList.data[0]?.title).toBe('Ticket of test 02');
+    expect(supportTicketsList.data[0]?.title).toBe('Ticket of test 02');
   });
 });

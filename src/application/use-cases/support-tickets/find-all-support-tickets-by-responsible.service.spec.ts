@@ -44,7 +44,7 @@ describe('Find All Support Tickets By Responsible Use Case', () => {
       responsible: { connect: { id: responsibleId } },
     });
 
-    const supportTicketList = await sut.execute({
+    const supportTicketsList = await sut.execute({
       responsibleId,
     });
 
@@ -60,10 +60,10 @@ describe('Find All Support Tickets By Responsible Use Case', () => {
     };
 
     Object.keys(expectedResult).forEach((key) =>
-      expect(supportTicketList[key]).toBe(expectedResult[key]),
+      expect(supportTicketsList[key]).toBe(expectedResult[key]),
     );
 
-    expect(supportTicketList.data[0]?.title).toBe('Ticket of test 01');
+    expect(supportTicketsList.data[0]?.title).toBe('Ticket of test 01');
   });
 
   it('should be able to find all a support tickets by responsible on another page', async () => {
@@ -90,7 +90,7 @@ describe('Find All Support Tickets By Responsible Use Case', () => {
       responsible: { connect: { id: responsibleId } },
     });
 
-    const supportTicketList = await sut.execute({
+    const supportTicketsList = await sut.execute({
       responsibleId,
       limit: 1,
       page: 2,
@@ -108,9 +108,9 @@ describe('Find All Support Tickets By Responsible Use Case', () => {
     };
 
     Object.keys(expectedResult).forEach((key) =>
-      expect(supportTicketList[key]).toBe(expectedResult[key]),
+      expect(supportTicketsList[key]).toBe(expectedResult[key]),
     );
 
-    expect(supportTicketList.data[0]?.title).toBe('Ticket of test 02');
+    expect(supportTicketsList.data[0]?.title).toBe('Ticket of test 02');
   });
 });
