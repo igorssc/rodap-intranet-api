@@ -9,6 +9,7 @@ import {
   Body,
   Controller,
   Delete,
+  ForbiddenException,
   Get,
   HttpCode,
   Param,
@@ -20,7 +21,12 @@ import {
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 import { CreateSupportTicketDto } from '../dtos/support-tickets/create-support-ticket.dto';
 import { User } from '../decorators/user.decorator';
-import { User as UserProps } from '@prisma/client';
+import {
+  RolesAction,
+  RolesSubject,
+  SupportTicket,
+  User as UserProps,
+} from '@prisma/client';
 import { FindAllSupportTicketsDto } from '../dtos/support-tickets/find-all-support-tickets.dto';
 import { FindAllSupportTicketsByCreatorDto } from '../dtos/support-tickets/find-all-support-tickets-by-creator.dto';
 import { FindAllSupportTicketsByResponsibleDto } from '../dtos/support-tickets/find-all-support-tickets-by-responsible.dto';
@@ -30,7 +36,14 @@ import { FindAllMessagesBySupportTicketService } from '@/application/use-cases/s
 import { UpdateSupportTicketDto } from '../dtos/support-tickets/update-support-ticket.dto';
 import { UpdateSupportTicketService } from '@/application/use-cases/support-tickets/update-support-ticket.service';
 import { FindUniqueSupportTicketService } from '@/application/use-cases/support-tickets/find-unique-support-ticket.service';
-import { SUPPORT_TICKET_NOT_FOUND } from '@/application/errors/errors.constants';
+import {
+  INVALID_PERMISSION,
+  SUPPORT_TICKET_NOT_FOUND,
+} from '@/application/errors/errors.constants';
+import { CheckPolicies } from '../decorators/check-guard.decorator';
+import { subject } from '@casl/ability';
+import { UserWithRoles } from '@/application/interfaces/user';
+import { CaslAbilityFactory } from '../casl/casl-ability.factory';
 
 @Controller('support-tickets')
 export class SupportTicketsController {
@@ -44,10 +57,12 @@ export class SupportTicketsController {
     private findAllMessagesBySupportTicketService: FindAllMessagesBySupportTicketService,
     private updateSupportTicketService: UpdateSupportTicketService,
     private findUniqueSupportTicketService: FindUniqueSupportTicketService,
+    private caslAbilityFactory: CaslAbilityFactory,
   ) {}
 
   @Get()
   @UseGuards(JwtAuthGuard)
+  @CheckPolicies(RolesAction.READ, RolesSubject.SUPPORT_TICKET)
   async findAllSupportTickets(@Query() query: FindAllSupportTicketsDto) {
     const { page, limit } = query;
 
@@ -59,6 +74,7 @@ export class SupportTicketsController {
 
   @Get(':ticketId')
   @UseGuards(JwtAuthGuard)
+  @CheckPolicies(RolesAction.READ, RolesSubject.SUPPORT_TICKET)
   async findUniqueSupportTicket(@Param('ticketId') ticketId: string) {
     const { supportTicket } = await this.findUniqueSupportTicketService.execute(
       ticketId,
@@ -67,8 +83,25 @@ export class SupportTicketsController {
     return supportTicket;
   }
 
+  @Get('me')
+  @UseGuards(JwtAuthGuard)
+  @CheckPolicies(RolesAction.READ, RolesSubject.SUPPORT_TICKET)
+  async findAllMeSupportTickets(
+    @Query() query: FindAllSupportTicketsByCreatorDto,
+    @User() user: UserProps,
+  ) {
+    const { page, limit } = query;
+
+    return await this.findAllSupportTicketsByCreatorService.execute({
+      page,
+      limit,
+      creatorId: user.id,
+    });
+  }
+
   @Get('creator/:creatorId')
   @UseGuards(JwtAuthGuard)
+  @CheckPolicies(RolesAction.READ, RolesSubject.SUPPORT_TICKET)
   async findAllSupportTicketsByCreator(
     @Param('creatorId') creatorId: string,
     @Query() query: FindAllSupportTicketsByCreatorDto,
@@ -84,6 +117,7 @@ export class SupportTicketsController {
 
   @Get('responsible/:responsibleId')
   @UseGuards(JwtAuthGuard)
+  @CheckPolicies(RolesAction.READ, RolesSubject.SUPPORT_TICKET)
   async findAllSupportTicketsByResponsible(
     @Param('responsibleId') responsibleId: string,
     @Query() query: FindAllSupportTicketsByResponsibleDto,
@@ -99,6 +133,7 @@ export class SupportTicketsController {
 
   @Get('message/:ticketId')
   @UseGuards(JwtAuthGuard)
+  @CheckPolicies(RolesAction.READ, RolesSubject.SUPPORT_TICKET)
   async findAllSupportTicketMessagesByTicket(
     @Param('ticketId') ticketId: string,
     @Query() query: FindAllSupportTicketMessagesByCreatorDto,
@@ -115,6 +150,7 @@ export class SupportTicketsController {
   @Post()
   @HttpCode(201)
   @UseGuards(JwtAuthGuard)
+  @CheckPolicies(RolesAction.CREATE, RolesSubject.SUPPORT_TICKET)
   async createSupportTicket(
     @Body() body: CreateSupportTicketDto,
     @User() user: UserProps,
@@ -131,6 +167,7 @@ export class SupportTicketsController {
   @Post('message/:ticketId')
   @HttpCode(201)
   @UseGuards(JwtAuthGuard)
+  @CheckPolicies(RolesAction.CREATE, RolesSubject.SUPPORT_TICKET)
   async createSupportTicketMessage(
     @Body() body: CreateSupportTicketMessageDto,
     @Param('ticketId') ticketId: string,
@@ -151,12 +188,29 @@ export class SupportTicketsController {
   async update(
     @Param('ticketId') ticketId: string,
     @Body() body: UpdateSupportTicketDto,
+    @User() user: UserProps,
   ) {
     const { supportTicket: currentSupportTicket } =
       await this.findUniqueSupportTicketService.execute(ticketId);
 
     if (!currentSupportTicket) {
       throw new BadRequestException(SUPPORT_TICKET_NOT_FOUND);
+    }
+
+    const ability = this.caslAbilityFactory.createForUser(
+      user as UserWithRoles,
+    );
+
+    const isAllowed = ability.can(
+      RolesAction.UPDATE,
+      subject(
+        RolesSubject.SUPPORT_TICKET,
+        currentSupportTicket as SupportTicket,
+      ),
+    );
+
+    if (!isAllowed && user.id === currentSupportTicket.creator_id) {
+      throw new ForbiddenException(INVALID_PERMISSION);
     }
 
     const { supportTicket } = await this.updateSupportTicketService.execute(
@@ -169,6 +223,7 @@ export class SupportTicketsController {
 
   @Delete(':ticketId')
   @UseGuards(JwtAuthGuard)
+  @CheckPolicies(RolesAction.DELETE, RolesSubject.SUPPORT_TICKET)
   async deleteUnique(@Param('ticketId') ticketId: string) {
     await this.deleteUniqueSupportTicketService.execute(ticketId);
   }

@@ -24,7 +24,6 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { RolesAction, RolesSubject, User as UserProps } from '@prisma/client';
-import { CaslAbilityFactory } from '../casl/casl-ability.factory';
 import { CheckPolicies } from '../decorators/check-guard.decorator';
 import { UpdateUserDto } from '../dtos/users/update-user.dto';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
@@ -48,7 +47,7 @@ export class UsersController {
     private findUniqueUserService: FindUniqueUserService,
     private updateUserService: UpdateUserService,
     private deleteUniqueUserService: DeleteUniqueUserService,
-    private caslAbilityFactory: CaslAbilityFactory,
+
     private createUserLogService: CreateUserLogService,
     private updateUserLogService: UpdateUserLogService,
     private deleteUserLogService: DeleteUserLogService,

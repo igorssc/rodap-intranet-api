@@ -3,11 +3,12 @@ import { UserWithRoles } from '@/application/interfaces/user';
 import { AbilityBuilder, PureAbility } from '@casl/ability';
 import { createPrismaAbility, PrismaQuery, Subjects } from '@casl/prisma';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { RolesAction } from '@prisma/client';
+import { RolesAction, SupportTicket } from '@prisma/client';
 
 type SubjectsType =
   | Subjects<{
       USER: UserWithRoles;
+      SUPPORT_TICKET: SupportTicket;
     }>
   | 'all';
 
