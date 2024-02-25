@@ -33,12 +33,12 @@ import { CreateUserLogService } from '@/application/use-cases/action-logs/user/c
 import { UpdateUserLogService } from '@/application/use-cases/action-logs/user/update-user-logs.service';
 import { PrismaService } from '@/application/providers/prisma/prisma.service';
 import { DeleteUserLogService } from '@/application/use-cases/action-logs/user/delete-user-logs.service';
-import { UploadPictureProfileService } from '@/application/use-cases/files/user/upload-picture-profile.service';
 import { UpdateMeUserDto } from '../dtos/users/update-me-user.dto';
 import { PictureUploadInterceptor } from '../decorators/picture-upload-interceptor.decorator';
 import { UpdateMeLogService } from '@/application/use-cases/action-logs/user/update-me-logs.service';
 import { PictureUploadValidator } from '../decorators/picture-upload-validator.decorator';
-import { DeletePictureProfileService } from '@/application/use-cases/files/user/delete-picture-profile.service';
+import { UploadProfilePictureService } from '@/application/use-cases/files/user/upload-profile-picture.service';
+import { DeleteProfilePictureService } from '@/application/use-cases/files/user/delete-profile-picture.service';
 
 @Controller('users')
 export class UsersController {
@@ -51,8 +51,8 @@ export class UsersController {
     private createUserLogService: CreateUserLogService,
     private updateUserLogService: UpdateUserLogService,
     private deleteUserLogService: DeleteUserLogService,
-    private uploadPictureProfileService: UploadPictureProfileService,
-    private deletePictureProfileService: DeletePictureProfileService,
+    private uploadProfilePictureService: UploadProfilePictureService,
+    private deleteProfilePictureService: DeleteProfilePictureService,
     private updateMeLogService: UpdateMeLogService,
     private prismaService: PrismaService,
   ) {}
@@ -110,15 +110,15 @@ export class UsersController {
     return userExposed;
   }
 
-  @Patch('picture-profile')
+  @Patch('profile-picture')
   @UseGuards(JwtAuthGuard)
   @PictureUploadInterceptor()
-  async updatePictureProfileMe(
+  async updateProfilePictureMe(
     @PictureUploadValidator() file: Express.Multer.File,
     @User() user: UserProps,
   ) {
     const { user: userUpdated } =
-      await this.uploadPictureProfileService.execute(user, file);
+      await this.uploadProfilePictureService.execute(user, file);
 
     await this.updateMeLogService.execute({
       actionUser: user,
@@ -127,11 +127,11 @@ export class UsersController {
     });
   }
 
-  @Patch('picture-profile/:userId')
+  @Patch('profile-picture/:userId')
   @UseGuards(JwtAuthGuard)
   @CheckPolicies(RolesAction.update, RolesSubject.USER)
   @PictureUploadInterceptor()
-  async updatePictureProfile(
+  async updateProfilePicture(
     @Param('userId') userId: string,
     @PictureUploadValidator() file: Express.Multer.File,
     @User() user: UserProps,
@@ -145,7 +145,7 @@ export class UsersController {
     }
 
     const { user: userUpdated } =
-      await this.uploadPictureProfileService.execute(userToBeChanged, file);
+      await this.uploadProfilePictureService.execute(userToBeChanged, file);
 
     await this.updateUserLogService.execute({
       actionUser: user,
@@ -211,11 +211,11 @@ export class UsersController {
     return userExposed;
   }
 
-  @Delete('picture-profile')
+  @Delete('profile-picture')
   @UseGuards(JwtAuthGuard)
-  async deletePictureProfileMe(@User() user: UserProps) {
+  async deleteProfilePictureMe(@User() user: UserProps) {
     const { user: userUpdated } =
-      await this.deletePictureProfileService.execute(user);
+      await this.deleteProfilePictureService.execute(user);
 
     await this.updateMeLogService.execute({
       actionUser: user,
@@ -224,9 +224,9 @@ export class UsersController {
     });
   }
 
-  @Delete('picture-profile/:userId')
+  @Delete('profile-picture/:userId')
   @UseGuards(JwtAuthGuard)
-  async deletePictureProfile(
+  async deleteProfilePicture(
     @User() user: UserProps,
     @Param('userId') userId: string,
   ) {
@@ -239,7 +239,7 @@ export class UsersController {
     }
 
     const { user: userUpdated } =
-      await this.deletePictureProfileService.execute(userToBeUploaded);
+      await this.deleteProfilePictureService.execute(userToBeUploaded);
 
     await this.updateUserLogService.execute({
       actionUser: user,

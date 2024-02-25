@@ -17,7 +17,7 @@ export class InMemoryUsersRepository implements UsersRepository {
       created_at: new Date(),
       is_admin: data.is_admin ?? false,
       is_active: data.is_active ?? true,
-      picture_profile: '',
+      profile_picture: '',
     };
 
     this.items.push(userCreated);

@@ -5,27 +5,27 @@ import { DeleteUniqueFileFromS3Service } from '../delete-unique-file-from-s3.ser
 import { extractFileNameFromS3Url } from '@/application/utils/extract-file-name-from-s3-url';
 import { PartialUserWithMasterData } from '@/application/interfaces/user';
 
-type DeletePictureProfileServiceExecuteProps = PartialUserWithMasterData &
-  Pick<User, 'picture_profile'>;
+type DeleteProfilePictureServiceExecuteProps = PartialUserWithMasterData &
+  Pick<User, 'profile_picture'>;
 
 @Injectable()
-export class DeletePictureProfileService {
+export class DeleteProfilePictureService {
   constructor(
     private usersRepository: UsersRepository,
     private deleteUniqueFileFromS3Service: DeleteUniqueFileFromS3Service,
   ) {}
 
-  async execute(user: DeletePictureProfileServiceExecuteProps) {
-    if (user.picture_profile) {
+  async execute(user: DeleteProfilePictureServiceExecuteProps) {
+    if (user.profile_picture) {
       const fileNameTakenFromOldProfilePhoto = extractFileNameFromS3Url(
-        user.picture_profile,
+        user.profile_picture,
       );
 
       await this.deleteUniqueFileFromS3Service.execute(
         fileNameTakenFromOldProfilePhoto,
       );
       const userUpdated = await this.usersRepository.update(user.id, {
-        picture_profile: null,
+        profile_picture: null,
       });
 
       return { user: userUpdated };

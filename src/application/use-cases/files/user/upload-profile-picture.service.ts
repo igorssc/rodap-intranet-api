@@ -7,10 +7,10 @@ import * as fs from 'node:fs';
 import { DeleteUniqueFileFromS3Service } from '../delete-unique-file-from-s3.service';
 import { extractFileNameFromS3Url } from '@/application/utils/extract-file-name-from-s3-url';
 
-type ParseUser = Partial<User> & Pick<User, 'id' | 'picture_profile'>;
+type ParseUser = Partial<User> & Pick<User, 'id' | 'profile_picture'>;
 
 @Injectable()
-export class UploadPictureProfileService {
+export class UploadProfilePictureService {
   constructor(
     private usersRepository: UsersRepository,
     private compressPictureService: CompressPictureService,
@@ -27,16 +27,17 @@ export class UploadPictureProfileService {
       quality: 50,
     });
 
+    console.log(file.filename);
+
     const fileNameUploaded = await this.uploadUniqueFileToS3Service.execute({
-      fileName: fileCompressed.fileName,
+      fileName: 'profile-picture/' + fileCompressed.fileName,
       mimetype: fileCompressed.mimetype,
       buffer: fileCompressed.buffer,
-      path: file.path,
     });
 
-    if (user.picture_profile) {
+    if (user.profile_picture) {
       const fileNameTakenFromOldProfilePhoto = extractFileNameFromS3Url(
-        user.picture_profile,
+        user.profile_picture,
       );
 
       await this.deleteUniqueFileFromS3Service.execute(
@@ -49,7 +50,7 @@ export class UploadPictureProfileService {
     });
 
     const userUpdated = await this.usersRepository.update(user.id, {
-      picture_profile: fileNameUploaded,
+      profile_picture: fileNameUploaded,
     });
 
     return { user: userUpdated };

@@ -6,7 +6,6 @@ import { generateUrlFromS3FileName } from '@/application/utils/generate-url-from
 
 interface UploadUniqueFileToS3ServiceExecuteProps {
   fileName: string;
-  path: string;
   buffer: Buffer;
   mimetype: AvailableFormatInfo | keyof FormatEnum;
 }
