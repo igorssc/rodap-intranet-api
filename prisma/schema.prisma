@@ -55,7 +55,7 @@ model User {
   is_admin                    Boolean                @default(false)
   is_active                   Boolean                @default(true)
   created_at                  DateTime               @default(now())
-  picture_profile             String?
+  profile_picture             String?
   roles                       Role[]
   action_logs                 ActionLog[]
   support_ticket_messages     SupportTicketMessage[]
