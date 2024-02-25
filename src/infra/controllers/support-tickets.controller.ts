@@ -20,7 +20,6 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
-import { CreateSupportTicketDto } from '../dtos/support-tickets/create-support-ticket.dto';
 import { User } from '../decorators/user.decorator';
 import {
   RolesAction,
@@ -49,6 +48,8 @@ import { CreateSupportTicketLogService } from '@/application/use-cases/action-lo
 import { DeleteSupportTicketLogService } from '@/application/use-cases/action-logs/support-ticket/delete-support-ticket-logs.service';
 import { UpdateSupportTicketLogService } from '@/application/use-cases/action-logs/support-ticket/update-support-ticket-logs.service';
 import { PictureUploadInterceptor } from '../decorators/picture-upload-interceptor.decorator';
+import { PictureUploadValidator } from '../decorators/picture-upload-validator.decorator';
+import { DocumentUploadValidator } from '../decorators/document-upload-validator.decorator';
 
 @Controller('support-tickets')
 export class SupportTicketsController {
@@ -161,9 +162,9 @@ export class SupportTicketsController {
   @CheckPolicies(RolesAction.create, RolesSubject.SUPPORT_TICKET)
   @PictureUploadInterceptor()
   async createSupportTicket(
-    @UploadedFile() file: Express.Multer.File,
     @Body() body: any,
     @User() user: UserProps,
+    @DocumentUploadValidator() file?: Express.Multer.File,
   ) {
     const { supportTicket } = await this.createSupportTicketService.execute({
       userId: user.id,

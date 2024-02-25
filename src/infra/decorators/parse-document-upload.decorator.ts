@@ -1,6 +1,6 @@
 import {
   FILE_NOT_FOUND,
-  FILE_SIZE_EXCEEDED_5MB_MESSAGE,
+  FILE_SIZE_EXCEEDED_10MB_MESSAGE,
   WRONG_FILE_TYPE_MESSAGE,
 } from '@/application/errors/validations.constants';
 import {
@@ -10,7 +10,7 @@ import {
   ParseFilePipe,
 } from '@nestjs/common';
 
-export class ParsePictureUpload extends ParseFilePipe {
+export class ParseDocumentUpload extends ParseFilePipe {
   async transform(file: any): Promise<any> {
     if (!file) {
       throw new BadRequestException(FILE_NOT_FOUND);
@@ -19,7 +19,7 @@ export class ParsePictureUpload extends ParseFilePipe {
     const parsedFile = await super.transform(file);
 
     const fileTypeValidator = new FileTypeValidator({
-      fileType: '.(png|jpeg|jpg)',
+      fileType: '.(png|jpeg|jpg|doc|docx|pdf|txt|xlsx|ppt)',
     });
 
     const isValidFileType = fileTypeValidator.isValid(file);
@@ -29,13 +29,13 @@ export class ParsePictureUpload extends ParseFilePipe {
     }
 
     const maxFileSizeValidator = new MaxFileSizeValidator({
-      maxSize: 1024 * 1024 * 5,
+      maxSize: 1024 * 1024 * 10,
     });
 
     const isValidFileSize = maxFileSizeValidator.isValid(file);
 
     if (!isValidFileSize) {
-      throw new BadRequestException(FILE_SIZE_EXCEEDED_5MB_MESSAGE);
+      throw new BadRequestException(FILE_SIZE_EXCEEDED_10MB_MESSAGE);
     }
 
     return parsedFile;

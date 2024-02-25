@@ -52,5 +52,8 @@ export const FILE_NOT_FOUND = 'Arquivo não encontrado.';
 
 export const WRONG_FILE_TYPE_MESSAGE = 'O tipo de arquivo é inválido.';
 
-export const FILE_SIZE_EXCEEDED_MESSAGE =
-  'O tamanho do arquivo excede o limite permitido.';
+export const FILE_SIZE_EXCEEDED_5MB_MESSAGE =
+  'O tamanho do arquivo excede o limite permitido de 5MB.';
+
+export const FILE_SIZE_EXCEEDED_10MB_MESSAGE =
+  'O tamanho do arquivo excede o limite permitido de 10MB.';
