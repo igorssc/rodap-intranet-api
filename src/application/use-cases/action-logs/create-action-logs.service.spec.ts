@@ -32,7 +32,7 @@ describe('Create user logs Use Case', () => {
     const { actionLog } = await sut.execute({
       action_data: { user_created: userCreated },
       action_type: ActionLogType.CREATE_USER,
-      userId: '110ec58a-a0f2-4ac4-8393-c866d813b8d1',
+      user_id: '110ec58a-a0f2-4ac4-8393-c866d813b8d1',
     });
 
     expect(actionLog.user_id).toEqual('110ec58a-a0f2-4ac4-8393-c866d813b8d1');

@@ -44,6 +44,9 @@ import { CheckPolicies } from '../decorators/check-guard.decorator';
 import { subject } from '@casl/ability';
 import { UserWithRoles } from '@/application/interfaces/user';
 import { CaslAbilityFactory } from '../casl/casl-ability.factory';
+import { CreateSupportTicketLogService } from '@/application/use-cases/action-logs/support-ticket/create-support-ticket-logs.service';
+import { DeleteSupportTicketLogService } from '@/application/use-cases/action-logs/support-ticket/delete-support-ticket-logs.service';
+import { UpdateSupportTicketLogService } from '@/application/use-cases/action-logs/support-ticket/update-support-ticket-logs.service';
 
 @Controller('support-tickets')
 export class SupportTicketsController {
@@ -58,6 +61,9 @@ export class SupportTicketsController {
     private updateSupportTicketService: UpdateSupportTicketService,
     private findUniqueSupportTicketService: FindUniqueSupportTicketService,
     private caslAbilityFactory: CaslAbilityFactory,
+    private createSupportTicketLogService: CreateSupportTicketLogService,
+    private deleteSupportTicketLogService: DeleteSupportTicketLogService,
+    private updateSupportTicketLogService: UpdateSupportTicketLogService,
   ) {}
 
   @Get()
@@ -161,6 +167,11 @@ export class SupportTicketsController {
       description: body.description,
     });
 
+    await this.createSupportTicketLogService.execute({
+      actionUser: user,
+      ticketCreated: supportTicket,
+    });
+
     return supportTicket;
   }
 
@@ -218,13 +229,29 @@ export class SupportTicketsController {
       body,
     );
 
+    await this.updateSupportTicketLogService.execute({
+      actionUser: user,
+      ticketUpdated: currentSupportTicket,
+      ticketUpdatedBefore: currentSupportTicket,
+      ticketUpdatedAfter: supportTicket,
+    });
+
     return supportTicket;
   }
 
   @Delete(':ticketId')
   @UseGuards(JwtAuthGuard)
   @CheckPolicies(RolesAction.DELETE, RolesSubject.SUPPORT_TICKET)
-  async deleteUnique(@Param('ticketId') ticketId: string) {
-    await this.deleteUniqueSupportTicketService.execute(ticketId);
+  async deleteUnique(
+    @Param('ticketId') ticketId: string,
+    @User() user: UserProps,
+  ) {
+    const supportTicketDeleted =
+      await this.deleteUniqueSupportTicketService.execute(ticketId);
+
+    await this.deleteSupportTicketLogService.execute({
+      actionUser: user,
+      ticketDeleted: supportTicketDeleted,
+    });
   }
 }

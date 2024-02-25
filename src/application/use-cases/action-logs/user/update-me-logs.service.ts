@@ -1,13 +1,18 @@
 import { Injectable } from '@nestjs/common';
 import { CreateActionLogService } from '../create-action-logs.service';
-import { ActionLogType } from '@prisma/client';
+import { ActionLog, ActionLogType } from '@prisma/client';
 import { findDifferentKeys } from '@/application/utils/find-different-keys';
 import { PartialUserWithMasterData } from '@/application/interfaces/user';
+import { UpdateMeActionLogsProps } from '@/application/interfaces/action-logs';
 
 interface UpdateUserLogServiceExecuteProps {
-  actionUserId: string;
+  actionUser: PartialUserWithMasterData;
   userUpdatedBefore: PartialUserWithMasterData;
   userUpdatedAfter: PartialUserWithMasterData;
+}
+
+interface UpdateMeActionLogUseCaseResponse {
+  actionLog: ActionLog & UpdateMeActionLogsProps;
 }
 
 @Injectable()
@@ -15,7 +20,7 @@ export class UpdateMeLogService {
   constructor(private createActionLogService: CreateActionLogService) {}
 
   async execute({
-    actionUserId,
+    actionUser,
     userUpdatedBefore,
     userUpdatedAfter,
   }: UpdateUserLogServiceExecuteProps) {
@@ -23,16 +28,21 @@ export class UpdateMeLogService {
 
     if (keysUpdated.length) {
       const { actionLog } = await this.createActionLogService.execute({
-        userId: actionUserId,
+        user_id: actionUser.id,
         action_type: ActionLogType.UPDATE_PROFILE,
         action_data: {
+          action_user: {
+            id: actionUser.id,
+            name: actionUser.name,
+            email: actionUser.email,
+          },
           updated_values: keysUpdated,
         },
-      });
+      } as UpdateMeActionLogsProps);
 
-      return { actionLog };
+      return { actionLog } as UpdateMeActionLogUseCaseResponse;
     }
 
-    return {};
+    return {} as UpdateMeActionLogUseCaseResponse;
   }
 }

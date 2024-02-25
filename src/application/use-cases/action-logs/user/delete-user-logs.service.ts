@@ -1,11 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { CreateActionLogService } from '../create-action-logs.service';
-import { ActionLogType } from '@prisma/client';
+import { ActionLog, ActionLogType } from '@prisma/client';
 import { PartialUserWithMasterData } from '@/application/interfaces/user';
+import { DeleteUserActionLogsProps } from '@/application/interfaces/action-logs';
 
 interface DeleteUserLogServiceExecuteProps {
   userDeleted: PartialUserWithMasterData;
   actionUser: PartialUserWithMasterData;
+}
+
+interface DeleteActionLogUseCaseResponse {
+  actionLog: ActionLog & DeleteUserActionLogsProps;
 }
 
 @Injectable()
@@ -14,7 +19,7 @@ export class DeleteUserLogService {
 
   async execute({ userDeleted, actionUser }: DeleteUserLogServiceExecuteProps) {
     const { actionLog } = await this.createActionLogService.execute({
-      userId: actionUser.id,
+      user_id: actionUser.id,
       action_type: ActionLogType.DELETE_USER,
       action_data: {
         action_user: {
@@ -28,8 +33,8 @@ export class DeleteUserLogService {
           email: userDeleted.email,
         },
       },
-    });
+    } as DeleteUserActionLogsProps);
 
-    return { actionLog };
+    return { actionLog } as DeleteActionLogUseCaseResponse;
   }
 }

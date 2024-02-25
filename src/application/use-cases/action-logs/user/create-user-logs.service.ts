@@ -1,11 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { CreateActionLogService } from '../create-action-logs.service';
-import { ActionLogType } from '@prisma/client';
+import { ActionLog, ActionLogType } from '@prisma/client';
 import { PartialUserWithMasterData } from '@/application/interfaces/user';
+import { CreateUserActionLogsProps } from '@/application/interfaces/action-logs';
 
 interface CreateUserLogServiceExecuteProps {
   userCreated: PartialUserWithMasterData;
   actionUser: PartialUserWithMasterData;
+}
+
+interface CreateActionLogUseCaseResponse {
+  actionLog: ActionLog & CreateUserActionLogsProps;
 }
 
 @Injectable()
@@ -14,7 +19,7 @@ export class CreateUserLogService {
 
   async execute({ userCreated, actionUser }: CreateUserLogServiceExecuteProps) {
     const { actionLog } = await this.createActionLogService.execute({
-      userId: actionUser.id,
+      user_id: actionUser.id,
       action_type: ActionLogType.CREATE_USER,
       action_data: {
         action_user: {
@@ -28,8 +33,8 @@ export class CreateUserLogService {
           email: userCreated.email,
         },
       },
-    });
+    } as CreateUserActionLogsProps);
 
-    return { actionLog };
+    return { actionLog } as CreateActionLogUseCaseResponse;
   }
 }

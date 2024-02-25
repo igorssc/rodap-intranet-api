@@ -119,7 +119,7 @@ export class UsersController {
       await this.uploadPictureProfileService.execute(user, file);
 
     await this.updateMeLogService.execute({
-      actionUserId: user.id,
+      actionUser: user,
       userUpdatedBefore: user,
       userUpdatedAfter: userUpdated,
     });
@@ -164,7 +164,7 @@ export class UsersController {
     const userExposed = this.prismaService.expose(userUpdated);
 
     await this.updateMeLogService.execute({
-      actionUserId: user.id,
+      actionUser: user,
       userUpdatedBefore: user,
       userUpdatedAfter: userUpdated,
     });

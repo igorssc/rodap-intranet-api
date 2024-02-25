@@ -8,7 +8,7 @@ interface CreateActionLogUseCaseResponse {
 }
 
 interface CreateActionLogServiceExecuteProps extends CreateActionLogDto {
-  userId: string;
+  user_id: string;
 }
 
 @Injectable()
@@ -16,14 +16,14 @@ export class CreateActionLogService {
   constructor(private actionLogsRepository: ActionLogsRepository) {}
 
   async execute({
-    userId,
+    user_id,
     action_type,
     action_data = {},
   }: CreateActionLogServiceExecuteProps): Promise<CreateActionLogUseCaseResponse> {
     const actionLog = await this.actionLogsRepository.create({
       action_data,
       action_type,
-      user: { connect: { id: userId } },
+      user: { connect: { id: user_id } },
     });
 
     return { actionLog };

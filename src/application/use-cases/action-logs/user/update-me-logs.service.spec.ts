@@ -37,12 +37,12 @@ describe('Update me logs Use Case', () => {
     };
 
     const { actionLog } = await sut.execute({
-      actionUserId: '110ec58a-a0f2-4ac4-8393-c866d813b8d1',
+      actionUser: userUpdatedBefore,
       userUpdatedBefore,
       userUpdatedAfter,
     });
 
-    expect(actionLog.user_id).toEqual('110ec58a-a0f2-4ac4-8393-c866d813b8d1');
+    expect(actionLog.user_id).toEqual('550e8400-e29b-41d4-a716-446655440000');
 
     expect(actionLog.action_type).toEqual('UPDATE_PROFILE');
 
