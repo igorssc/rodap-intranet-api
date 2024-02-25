@@ -47,9 +47,8 @@ import { CaslAbilityFactory } from '../casl/casl-ability.factory';
 import { CreateSupportTicketLogService } from '@/application/use-cases/action-logs/support-ticket/create-support-ticket-logs.service';
 import { DeleteSupportTicketLogService } from '@/application/use-cases/action-logs/support-ticket/delete-support-ticket-logs.service';
 import { UpdateSupportTicketLogService } from '@/application/use-cases/action-logs/support-ticket/update-support-ticket-logs.service';
-import { PictureUploadInterceptor } from '../decorators/picture-upload-interceptor.decorator';
-import { PictureUploadValidator } from '../decorators/picture-upload-validator.decorator';
 import { DocumentUploadValidator } from '../decorators/document-upload-validator.decorator';
+import { CreateSupportTicketDto } from '../dtos/support-tickets/create-support-ticket.dto';
 
 @Controller('support-tickets')
 export class SupportTicketsController {
@@ -160,16 +159,13 @@ export class SupportTicketsController {
   @HttpCode(201)
   @UseGuards(JwtAuthGuard)
   @CheckPolicies(RolesAction.create, RolesSubject.SUPPORT_TICKET)
-  @PictureUploadInterceptor()
   async createSupportTicket(
-    @Body() body: any,
+    @Body() body: CreateSupportTicketDto,
     @User() user: UserProps,
-    @DocumentUploadValidator() file?: Express.Multer.File,
   ) {
     const { supportTicket } = await this.createSupportTicketService.execute({
       userId: user.id,
-      title: body.title,
-      description: body.description,
+      ...body,
     });
 
     await this.createSupportTicketLogService.execute({

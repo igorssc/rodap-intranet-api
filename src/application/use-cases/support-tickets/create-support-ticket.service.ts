@@ -20,10 +20,12 @@ export class CreateSupportTicketService {
     userId,
     title,
     description,
+    priority,
   }: CreateSupportTicketServiceExecuteProps): Promise<CreateSupportTicketUseCaseResponse> {
     const supportTicket = await this.supportTicketRepository.create({
       title,
       description,
+      priority,
       creator: { connect: { id: userId } },
     });
 

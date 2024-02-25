@@ -1,14 +1,15 @@
 import { ActionLogsRepository } from '@/application/repositories/action-logs.repository';
-import { CreateActionLogDto } from '@/infra/dtos/action-logs/create-action-log';
 import { Injectable } from '@nestjs/common';
-import { ActionLog } from '@prisma/client';
+import { ActionLog, ActionLogType } from '@prisma/client';
 
 interface CreateActionLogUseCaseResponse {
   actionLog: ActionLog;
 }
 
-interface CreateActionLogServiceExecuteProps extends CreateActionLogDto {
+interface CreateActionLogServiceExecuteProps {
   user_id: string;
+  action_type: ActionLogType;
+  action_data?: object;
 }
 
 @Injectable()
