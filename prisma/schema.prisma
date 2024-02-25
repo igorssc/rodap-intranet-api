@@ -16,11 +16,11 @@ enum RolesSubject {
 }
 
 enum RolesAction {
-  MANAGE
-  CREATE
-  READ
-  UPDATE
-  DELETE
+  manage
+  create
+  read
+  update
+  delete
 }
 
 enum ActionLogType {

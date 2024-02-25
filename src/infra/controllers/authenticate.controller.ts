@@ -23,7 +23,7 @@ export class AuthenticateController {
     const { access_token } = await this.loginService.execute(user);
 
     await this.createActionLogService.execute({
-      userId: user.id,
+      user_id: user.id,
       action_type: 'LOGIN',
     });
 

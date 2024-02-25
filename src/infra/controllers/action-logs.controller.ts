@@ -2,7 +2,6 @@ import {
   BadRequestException,
   Controller,
   Get,
-  HttpCode,
   Param,
   Query,
   UseGuards,
@@ -41,7 +40,6 @@ export class ActionLogsController {
   }
 
   @Get()
-  @HttpCode(201)
   @UseGuards(JwtAuthGuard)
   async findAll(@User() user: UserProps, @Query() query: FindAllActionLogsDto) {
     const { page, limit } = query;
@@ -55,7 +53,7 @@ export class ActionLogsController {
 
   @Get(':userId')
   @UseGuards(JwtAuthGuard, PoliciesGuard)
-  @CheckPolicies(RolesAction.READ, RolesSubject.USER)
+  @CheckPolicies(RolesAction.read, RolesSubject.USER)
   async findUnique(
     @Param('userId') userId: string,
     @Query() query: FindAllActionLogsDto,

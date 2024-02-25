@@ -20,15 +20,6 @@ ALTER TYPE "ActionLogType" ADD VALUE 'CREATE_TICKET';
 ALTER TYPE "ActionLogType" ADD VALUE 'UPDATE_TICKET';
 ALTER TYPE "ActionLogType" ADD VALUE 'DELETE_TICKET';
 
--- AlterEnum
-BEGIN;
-CREATE TYPE "RolesAction_new" AS ENUM ('MANAGE', 'CREATE', 'READ', 'UPDATE', 'DELETE');
-ALTER TABLE "roles" ALTER COLUMN "action" TYPE "RolesAction_new" USING ("action"::text::"RolesAction_new");
-ALTER TYPE "RolesAction" RENAME TO "RolesAction_old";
-ALTER TYPE "RolesAction_new" RENAME TO "RolesAction";
-DROP TYPE "RolesAction_old";
-COMMIT;
-
 -- CreateTable
 CREATE TABLE "support_tickets" (
     "id" TEXT NOT NULL,

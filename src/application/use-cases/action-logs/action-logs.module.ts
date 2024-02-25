@@ -10,6 +10,9 @@ import { FindAllActionLogsService } from './find-all-action-logs.service';
 import { FindActionLogsByUserService } from './user/find-action-logs-by-user.service';
 import { DeleteUserLogService } from './user/delete-user-logs.service';
 import { UpdateMeLogService } from './user/update-me-logs.service';
+import { CreateSupportTicketLogService } from './support-ticket/create-support-ticket-logs.service';
+import { DeleteSupportTicketLogService } from './support-ticket/delete-support-ticket-logs.service';
+import { UpdateSupportTicketLogService } from './support-ticket/update-support-ticket-logs.service';
 
 @Module({
   imports: [forwardRef(() => UsersModule)],
@@ -22,6 +25,9 @@ import { UpdateMeLogService } from './user/update-me-logs.service';
     DeleteUserLogService,
     PrismaService,
     UpdateMeLogService,
+    CreateSupportTicketLogService,
+    DeleteSupportTicketLogService,
+    UpdateSupportTicketLogService,
     { provide: ActionLogsRepository, useClass: PrismaActionLogsRepository },
   ],
   exports: [
@@ -33,6 +39,9 @@ import { UpdateMeLogService } from './user/update-me-logs.service';
     FindActionLogsByUserService,
     DeleteUserLogService,
     UpdateMeLogService,
+    CreateSupportTicketLogService,
+    DeleteSupportTicketLogService,
+    UpdateSupportTicketLogService,
   ],
 })
 export class ActionLogsModule {}

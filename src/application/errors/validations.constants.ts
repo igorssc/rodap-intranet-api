@@ -20,7 +20,8 @@ export const PASSWORD_STRING_MESSAGE = 'A senha deve ser uma string.';
 export const MIN_PASSWORD_LENGTH_MESSAGE =
   'A senha deve ter no mínimo 6 caracteres.';
 
-export const MIN_TITLE_LENGTH_MESSAGE = 'O título deve ter no mínimo 10';
+export const MIN_TITLE_LENGTH_MESSAGE =
+  'O título deve ter no mínimo 10 caracteres.';
 
 export const MIN_DESCRIPTION_LENGTH_MESSAGE =
   'A descrição deve ter no mínimo 20 caracteres.';

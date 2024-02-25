@@ -16,6 +16,7 @@ import {
   Patch,
   Post,
   Query,
+  UploadedFile,
   UseGuards,
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
@@ -47,6 +48,7 @@ import { CaslAbilityFactory } from '../casl/casl-ability.factory';
 import { CreateSupportTicketLogService } from '@/application/use-cases/action-logs/support-ticket/create-support-ticket-logs.service';
 import { DeleteSupportTicketLogService } from '@/application/use-cases/action-logs/support-ticket/delete-support-ticket-logs.service';
 import { UpdateSupportTicketLogService } from '@/application/use-cases/action-logs/support-ticket/update-support-ticket-logs.service';
+import { PictureUploadInterceptor } from '../decorators/picture-upload-interceptor.decorator';
 
 @Controller('support-tickets')
 export class SupportTicketsController {
@@ -68,7 +70,7 @@ export class SupportTicketsController {
 
   @Get()
   @UseGuards(JwtAuthGuard)
-  @CheckPolicies(RolesAction.READ, RolesSubject.SUPPORT_TICKET)
+  @CheckPolicies(RolesAction.read, RolesSubject.SUPPORT_TICKET)
   async findAllSupportTickets(@Query() query: FindAllSupportTicketsDto) {
     const { page, limit } = query;
 
@@ -80,7 +82,7 @@ export class SupportTicketsController {
 
   @Get(':ticketId')
   @UseGuards(JwtAuthGuard)
-  @CheckPolicies(RolesAction.READ, RolesSubject.SUPPORT_TICKET)
+  @CheckPolicies(RolesAction.read, RolesSubject.SUPPORT_TICKET)
   async findUniqueSupportTicket(@Param('ticketId') ticketId: string) {
     const { supportTicket } = await this.findUniqueSupportTicketService.execute(
       ticketId,
@@ -91,7 +93,7 @@ export class SupportTicketsController {
 
   @Get('me')
   @UseGuards(JwtAuthGuard)
-  @CheckPolicies(RolesAction.READ, RolesSubject.SUPPORT_TICKET)
+  @CheckPolicies(RolesAction.read, RolesSubject.SUPPORT_TICKET)
   async findAllMeSupportTickets(
     @Query() query: FindAllSupportTicketsByCreatorDto,
     @User() user: UserProps,
@@ -107,7 +109,7 @@ export class SupportTicketsController {
 
   @Get('creator/:creatorId')
   @UseGuards(JwtAuthGuard)
-  @CheckPolicies(RolesAction.READ, RolesSubject.SUPPORT_TICKET)
+  @CheckPolicies(RolesAction.read, RolesSubject.SUPPORT_TICKET)
   async findAllSupportTicketsByCreator(
     @Param('creatorId') creatorId: string,
     @Query() query: FindAllSupportTicketsByCreatorDto,
@@ -123,7 +125,7 @@ export class SupportTicketsController {
 
   @Get('responsible/:responsibleId')
   @UseGuards(JwtAuthGuard)
-  @CheckPolicies(RolesAction.READ, RolesSubject.SUPPORT_TICKET)
+  @CheckPolicies(RolesAction.read, RolesSubject.SUPPORT_TICKET)
   async findAllSupportTicketsByResponsible(
     @Param('responsibleId') responsibleId: string,
     @Query() query: FindAllSupportTicketsByResponsibleDto,
@@ -139,7 +141,7 @@ export class SupportTicketsController {
 
   @Get('message/:ticketId')
   @UseGuards(JwtAuthGuard)
-  @CheckPolicies(RolesAction.READ, RolesSubject.SUPPORT_TICKET)
+  @CheckPolicies(RolesAction.read, RolesSubject.SUPPORT_TICKET)
   async findAllSupportTicketMessagesByTicket(
     @Param('ticketId') ticketId: string,
     @Query() query: FindAllSupportTicketMessagesByCreatorDto,
@@ -156,9 +158,11 @@ export class SupportTicketsController {
   @Post()
   @HttpCode(201)
   @UseGuards(JwtAuthGuard)
-  @CheckPolicies(RolesAction.CREATE, RolesSubject.SUPPORT_TICKET)
+  @CheckPolicies(RolesAction.create, RolesSubject.SUPPORT_TICKET)
+  @PictureUploadInterceptor()
   async createSupportTicket(
-    @Body() body: CreateSupportTicketDto,
+    @UploadedFile() file: Express.Multer.File,
+    @Body() body: any,
     @User() user: UserProps,
   ) {
     const { supportTicket } = await this.createSupportTicketService.execute({
@@ -178,7 +182,7 @@ export class SupportTicketsController {
   @Post('message/:ticketId')
   @HttpCode(201)
   @UseGuards(JwtAuthGuard)
-  @CheckPolicies(RolesAction.CREATE, RolesSubject.SUPPORT_TICKET)
+  @CheckPolicies(RolesAction.create, RolesSubject.SUPPORT_TICKET)
   async createSupportTicketMessage(
     @Body() body: CreateSupportTicketMessageDto,
     @Param('ticketId') ticketId: string,
@@ -213,7 +217,7 @@ export class SupportTicketsController {
     );
 
     const isAllowed = ability.can(
-      RolesAction.UPDATE,
+      RolesAction.update,
       subject(
         RolesSubject.SUPPORT_TICKET,
         currentSupportTicket as SupportTicket,
@@ -241,7 +245,7 @@ export class SupportTicketsController {
 
   @Delete(':ticketId')
   @UseGuards(JwtAuthGuard)
-  @CheckPolicies(RolesAction.DELETE, RolesSubject.SUPPORT_TICKET)
+  @CheckPolicies(RolesAction.delete, RolesSubject.SUPPORT_TICKET)
   async deleteUnique(
     @Param('ticketId') ticketId: string,
     @User() user: UserProps,

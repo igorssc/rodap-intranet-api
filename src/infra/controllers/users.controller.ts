@@ -20,7 +20,6 @@ import {
   Patch,
   Post,
   Query,
-  UploadedFile,
   UseGuards,
 } from '@nestjs/common';
 import { RolesAction, RolesSubject, User as UserProps } from '@prisma/client';
@@ -38,6 +37,7 @@ import { UploadPictureProfileService } from '@/application/use-cases/files/user/
 import { UpdateMeUserDto } from '../dtos/users/update-me-user.dto';
 import { PictureUploadInterceptor } from '../decorators/picture-upload-interceptor.decorator';
 import { UpdateMeLogService } from '@/application/use-cases/action-logs/user/update-me-logs.service';
+import { PictureUploadValidator } from '../decorators/picture-upload-validator.decorator';
 
 @Controller('users')
 export class UsersController {
@@ -65,7 +65,7 @@ export class UsersController {
 
   @Get(':query')
   @UseGuards(JwtAuthGuard, PoliciesGuard)
-  @CheckPolicies(RolesAction.READ, RolesSubject.USER)
+  @CheckPolicies(RolesAction.read, RolesSubject.USER)
   async findUnique(@Param('query') query: string) {
     const { user } = await this.findUniqueUserService.execute(query);
 
@@ -80,7 +80,7 @@ export class UsersController {
 
   @Get()
   @UseGuards(JwtAuthGuard, PoliciesGuard)
-  @CheckPolicies(RolesAction.READ, RolesSubject.USER)
+  @CheckPolicies(RolesAction.read, RolesSubject.USER)
   async findAll(@User() user: UserProps, @Query() query: FindAllUsersDto) {
     const { page, limit } = query;
 
@@ -94,7 +94,7 @@ export class UsersController {
   @Post()
   @HttpCode(201)
   @UseGuards(JwtAuthGuard, PoliciesGuard)
-  @CheckPolicies(RolesAction.CREATE, RolesSubject.USER)
+  @CheckPolicies(RolesAction.create, RolesSubject.USER)
   async createUser(@Body() body: CreateUserDto, @User() user: UserProps) {
     const { user: userCreated } = await this.createUserService.execute(body);
 
@@ -112,7 +112,7 @@ export class UsersController {
   @UseGuards(JwtAuthGuard)
   @PictureUploadInterceptor()
   async updatePictureProfileMe(
-    @UploadedFile() file: Express.Multer.File,
+    @PictureUploadValidator() file: Express.Multer.File,
     @User() user: UserProps,
   ) {
     const { user: userUpdated } =
@@ -127,11 +127,11 @@ export class UsersController {
 
   @Patch('picture-profile/:userId')
   @UseGuards(JwtAuthGuard)
-  @CheckPolicies(RolesAction.UPDATE, RolesSubject.USER)
+  @CheckPolicies(RolesAction.update, RolesSubject.USER)
   @PictureUploadInterceptor()
   async updatePictureProfile(
     @Param('userId') userId: string,
-    @UploadedFile() file: Express.Multer.File,
+    @PictureUploadValidator() file: Express.Multer.File,
     @User() user: UserProps,
   ) {
     const { user: userToBeChanged } = await this.findUniqueUserService.execute(
@@ -174,7 +174,7 @@ export class UsersController {
 
   @Patch(':userId')
   @UseGuards(JwtAuthGuard)
-  @CheckPolicies(RolesAction.UPDATE, RolesSubject.USER)
+  @CheckPolicies(RolesAction.update, RolesSubject.USER)
   async update(
     @Param('userId') userId: string,
     @Body() body: UpdateUserDto,
@@ -211,7 +211,7 @@ export class UsersController {
 
   @Delete(':userId')
   @UseGuards(JwtAuthGuard, PoliciesGuard)
-  @CheckPolicies(RolesAction.DELETE, RolesSubject.USER)
+  @CheckPolicies(RolesAction.delete, RolesSubject.USER)
   async deleteUnique(@Param('userId') userId: string, @User() user: UserProps) {
     const { user: userToBeDeleted } = await this.findUniqueUserService.execute(
       userId,
