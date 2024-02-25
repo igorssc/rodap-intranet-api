@@ -38,6 +38,7 @@ import { UpdateMeUserDto } from '../dtos/users/update-me-user.dto';
 import { PictureUploadInterceptor } from '../decorators/picture-upload-interceptor.decorator';
 import { UpdateMeLogService } from '@/application/use-cases/action-logs/user/update-me-logs.service';
 import { PictureUploadValidator } from '../decorators/picture-upload-validator.decorator';
+import { DeletePictureProfileService } from '@/application/use-cases/files/user/delete-picture-profile.service';
 
 @Controller('users')
 export class UsersController {
@@ -51,6 +52,7 @@ export class UsersController {
     private updateUserLogService: UpdateUserLogService,
     private deleteUserLogService: DeleteUserLogService,
     private uploadPictureProfileService: UploadPictureProfileService,
+    private deletePictureProfileService: DeletePictureProfileService,
     private updateMeLogService: UpdateMeLogService,
     private prismaService: PrismaService,
   ) {}
@@ -207,6 +209,44 @@ export class UsersController {
     });
 
     return userExposed;
+  }
+
+  @Delete('picture-profile')
+  @UseGuards(JwtAuthGuard)
+  async deletePictureProfileMe(@User() user: UserProps) {
+    const { user: userUpdated } =
+      await this.deletePictureProfileService.execute(user);
+
+    await this.updateMeLogService.execute({
+      actionUser: user,
+      userUpdatedBefore: user,
+      userUpdatedAfter: userUpdated,
+    });
+  }
+
+  @Delete('picture-profile/:userId')
+  @UseGuards(JwtAuthGuard)
+  async deletePictureProfile(
+    @User() user: UserProps,
+    @Param('userId') userId: string,
+  ) {
+    const { user: userToBeUploaded } = await this.findUniqueUserService.execute(
+      userId,
+    );
+
+    if (!userToBeUploaded) {
+      throw new BadRequestException(USER_NOT_FOUND);
+    }
+
+    const { user: userUpdated } =
+      await this.deletePictureProfileService.execute(userToBeUploaded);
+
+    await this.updateUserLogService.execute({
+      actionUser: user,
+      updatedUser: userToBeUploaded,
+      userUpdatedBefore: userToBeUploaded,
+      userUpdatedAfter: userUpdated,
+    });
   }
 
   @Delete(':userId')

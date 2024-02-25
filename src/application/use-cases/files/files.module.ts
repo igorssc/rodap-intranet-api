@@ -4,15 +4,17 @@ import { UploadPictureProfileService } from './user/upload-picture-profile.servi
 import { CompressPictureService } from './compress-picture.service';
 import { UploadUniqueFileToS3Service } from './upload-unique-file-to-s3.service';
 import { DeleteUniqueFileFromS3Service } from './delete-unique-file-from-s3.service';
+import { DeletePictureProfileService } from './user/delete-picture-profile.service';
 
 @Module({
   imports: [UsersModule],
   providers: [
     UploadPictureProfileService,
+    DeletePictureProfileService,
     CompressPictureService,
     UploadUniqueFileToS3Service,
     DeleteUniqueFileFromS3Service,
   ],
-  exports: [UploadPictureProfileService],
+  exports: [UploadPictureProfileService, DeletePictureProfileService],
 })
 export class FilesModule {}
