@@ -4,7 +4,7 @@ import { Prisma } from '@prisma/client';
 import {
   FindAllByTicketProps,
   SupportTicketMessagesRepository,
-} from '../support-ticket-messages.repository';
+} from '../../support-ticket-messages.repository';
 
 @Injectable()
 export class PrismaSupportTicketMessagesRepository

@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { beforeEach, describe, expect, it } from 'vitest';
-import { InMemoryActionLogsRepository } from '@/application/repositories/implementations/in-memory-action-logs.repository';
+import { InMemoryActionLogsRepository } from '@/application/repositories/implementations/in-memory/in-memory-action-logs.repository';
 import { ActionLogsRepository } from '@/application/repositories/action-logs.repository';
 import { CreateActionLogService } from '../create-action-logs.service';
 import { DeleteUserLogService } from './delete-user-logs.service';

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma, Role, User } from '@prisma/client';
 import { randomUUID } from 'node:crypto';
-import { FindAllProps, UsersRepository } from '../users.repository';
+import { FindAllProps, UsersRepository } from '../../users.repository';
 
 @Injectable()
 export class InMemoryUsersRepository implements UsersRepository {

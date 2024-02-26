@@ -1,5 +1,5 @@
 import { PrismaService } from '@/application/providers/prisma/prisma.service';
-import { PrismaUsersRepository } from '@/application/repositories/implementations/prisma-users.repository';
+import { PrismaUsersRepository } from '@/application/repositories/implementations/prisma/prisma-users.repository';
 import { UsersRepository } from '@/application/repositories/users.repository';
 import { Module, forwardRef } from '@nestjs/common';
 import { CreateUserService } from './create-user.service';

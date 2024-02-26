@@ -4,7 +4,7 @@ import {
   ActionLogsRepository,
   FindAllByUserProps,
   FindAllProps,
-} from '../action-logs.repository';
+} from '../../action-logs.repository';
 import { Prisma } from '@prisma/client';
 
 @Injectable()

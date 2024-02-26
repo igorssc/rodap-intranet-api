@@ -4,7 +4,7 @@ import { randomUUID } from 'crypto';
 import {
   FindAllByTicketProps,
   SupportTicketMessagesRepository,
-} from '../support-ticket-messages.repository';
+} from '../../support-ticket-messages.repository';
 
 @Injectable()
 export class InMemorySupportTicketMessagesRepository

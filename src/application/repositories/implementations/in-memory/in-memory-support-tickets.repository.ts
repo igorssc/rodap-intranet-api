@@ -5,7 +5,7 @@ import {
   FindAllByResponsibleUserProps,
   FindAllProps,
   SupportTicketsRepository,
-} from '../support-tickets.repository';
+} from '../../support-tickets.repository';
 import { randomUUID } from 'crypto';
 
 @Injectable()

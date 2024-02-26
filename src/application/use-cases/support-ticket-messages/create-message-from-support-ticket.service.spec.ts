@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it } from 'vitest';
 import { randomUUID } from 'crypto';
 import { CreateMessageFromSupportTicketService } from './create-message-from-support-ticket.service';
 import { SupportTicketMessagesRepository } from '@/application/repositories/support-ticket-messages.repository';
-import { InMemorySupportTicketMessagesRepository } from '@/application/repositories/implementations/in-memory-support-ticket-messages.repository';
+import { InMemorySupportTicketMessagesRepository } from '@/application/repositories/implementations/in-memory/in-memory-support-ticket-messages.repository';
 
 describe('Create Message From Support Ticket Use Case', () => {
   let sut: CreateMessageFromSupportTicketService;

@@ -6,7 +6,7 @@ import {
   FindAllByResponsibleUserProps,
   FindAllProps,
   SupportTicketsRepository,
-} from '../support-tickets.repository';
+} from '../../support-tickets.repository';
 
 @Injectable()
 export class PrismaSupportTicketsRepository
