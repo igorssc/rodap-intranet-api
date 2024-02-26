@@ -1,6 +1,7 @@
-import { IsInt, IsOptional, Min } from 'class-validator';
+import { IsIn, IsInt, IsOptional, Min } from 'class-validator';
 import { Type } from 'class-transformer';
 import {
+  FILTER_SUPPORT_TICKET_VALID_MESSAGE,
   LIMIT_INT_MESSAGE,
   MIN_LIMIT_VALUE_MESSAGE,
   MIN_PAGE_VALUE_MESSAGE,
@@ -19,4 +20,10 @@ export abstract class FindAllSupportTicketsByCreatorDto {
   @Min(1, { message: MIN_LIMIT_VALUE_MESSAGE })
   @Type(() => Number)
   limit?: number;
+
+  @IsIn(['creator', 'responsible'], {
+    message: FILTER_SUPPORT_TICKET_VALID_MESSAGE,
+  })
+  @IsOptional()
+  filter?: string;
 }

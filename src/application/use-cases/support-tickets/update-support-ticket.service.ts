@@ -9,15 +9,20 @@ interface UpdateSupportTicketUseCaseResponse {
 
 @Injectable()
 export class UpdateSupportTicketService {
-  constructor(private supportTicketRepository: SupportTicketsRepository) {}
+  constructor(
+    private supportTicketMessagesRepository: SupportTicketsRepository,
+  ) {}
 
   async execute(
     ticketId: string,
     ticket: UpdateSupportTicketDto,
   ): Promise<UpdateSupportTicketUseCaseResponse> {
-    const supportTicket = await this.supportTicketRepository.update(ticketId, {
-      ...ticket,
-    });
+    const supportTicket = await this.supportTicketMessagesRepository.update(
+      ticketId,
+      {
+        ...ticket,
+      },
+    );
 
     return { supportTicket };
   }

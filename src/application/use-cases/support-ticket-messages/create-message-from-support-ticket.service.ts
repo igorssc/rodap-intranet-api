@@ -16,7 +16,7 @@ interface CreateMessageFromSupportTicketServiceExecuteProps
 @Injectable()
 export class CreateMessageFromSupportTicketService {
   constructor(
-    private supportTicketMessageRepository: SupportTicketMessagesRepository,
+    private supportTicketMessagesRepository: SupportTicketMessagesRepository,
   ) {}
 
   async execute({
@@ -25,7 +25,7 @@ export class CreateMessageFromSupportTicketService {
     message,
   }: CreateMessageFromSupportTicketServiceExecuteProps): Promise<CreateMessageFromSupportTicketUseCaseResponse> {
     const messageSupportTicket =
-      await this.supportTicketMessageRepository.create({
+      await this.supportTicketMessagesRepository.create({
         sender: { connect: { id: senderId } },
         ticket: { connect: { id: ticketId } },
         message: message,

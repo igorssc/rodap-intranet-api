@@ -36,8 +36,9 @@ enum ActionLogType {
 
 enum SupportTicketStatus {
   OPEN
-  CLOSED
   PROGRESS
+  CLOSED
+  RESOLVED
 }
 
 enum SupportTicketPriority {
@@ -94,7 +95,6 @@ model SupportTicket {
   ticket_number Int                   @default(autoincrement())
   title         String
   description   String?
-  attachment    String?
   status        SupportTicketStatus   @default(OPEN)
   created_at    DateTime              @default(now())
   priority      SupportTicketPriority @default(LOW)
@@ -112,7 +112,7 @@ model SupportTicket {
 
 model SupportTicketMessage {
   id         String   @id @default(uuid())
-  message    String
+  message    String?
   attachment String?
   created_at DateTime @default(now())
 

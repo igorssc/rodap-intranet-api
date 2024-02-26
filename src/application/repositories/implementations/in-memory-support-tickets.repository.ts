@@ -17,7 +17,6 @@ export class InMemorySupportTicketsRepository
   async create(ticket: Prisma.SupportTicketCreateInput) {
     const supportTicketCreated = {
       id: randomUUID(),
-      attachment: ticket.attachment,
       creator_id: ticket.creator.connect.id,
       description: ticket.description,
       status: SupportTicketStatus.OPEN,

@@ -27,8 +27,6 @@ export class UploadProfilePictureService {
       quality: 50,
     });
 
-    console.log(file.filename);
-
     const fileNameUploaded = await this.uploadUniqueFileToS3Service.execute({
       fileName: 'profile-picture/' + fileCompressed.fileName,
       mimetype: fileCompressed.mimetype,

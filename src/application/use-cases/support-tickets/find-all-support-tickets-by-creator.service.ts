@@ -10,22 +10,24 @@ interface FindAllSupportTicketsByCreatorServiceExecuteProps {
 
 @Injectable()
 export class FindAllSupportTicketsByCreatorService {
-  constructor(private supportTicketRepository: SupportTicketsRepository) {}
+  constructor(
+    private supportTicketMessagesRepository: SupportTicketsRepository,
+  ) {}
 
   async execute({
     creatorId,
     page = 1,
     limit = 10,
   }: FindAllSupportTicketsByCreatorServiceExecuteProps) {
-    const data = await this.supportTicketRepository.findAllByCreatorUser({
-      page,
-      pageSize: limit,
-      creatorId,
-    });
+    const data =
+      await this.supportTicketMessagesRepository.findAllByCreatorUser({
+        page,
+        pageSize: limit,
+        creatorId,
+      });
 
-    const totalCount = await this.supportTicketRepository.totalCreatorCount(
-      creatorId,
-    );
+    const totalCount =
+      await this.supportTicketMessagesRepository.totalCreatorCount(creatorId);
 
     const dataPaginated = pagination({
       data,

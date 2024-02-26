@@ -16,7 +16,6 @@ import {
   Patch,
   Post,
   Query,
-  UploadedFile,
   UseGuards,
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
@@ -47,8 +46,11 @@ import { CaslAbilityFactory } from '../casl/casl-ability.factory';
 import { CreateSupportTicketLogService } from '@/application/use-cases/action-logs/support-ticket/create-support-ticket-logs.service';
 import { DeleteSupportTicketLogService } from '@/application/use-cases/action-logs/support-ticket/delete-support-ticket-logs.service';
 import { UpdateSupportTicketLogService } from '@/application/use-cases/action-logs/support-ticket/update-support-ticket-logs.service';
-import { DocumentUploadValidator } from '../decorators/document-upload-validator.decorator';
 import { CreateSupportTicketDto } from '../dtos/support-tickets/create-support-ticket.dto';
+import { PoliciesGuard } from '../guards/policies.guard';
+import { MultiDocumentsUploadValidator } from '../decorators/documents/document-upload-validator.decorator';
+import { MultiDocumentsUploadInterceptor } from '../decorators/documents/multi-document-upload-interceptor.decorator';
+import { InsertMessageAttachmentsService } from '@/application/use-cases/files/support-ticket/insert-message-attachments.service';
 
 @Controller('support-tickets')
 export class SupportTicketsController {
@@ -66,10 +68,34 @@ export class SupportTicketsController {
     private createSupportTicketLogService: CreateSupportTicketLogService,
     private deleteSupportTicketLogService: DeleteSupportTicketLogService,
     private updateSupportTicketLogService: UpdateSupportTicketLogService,
+    private insertMessageAttachmentsService: InsertMessageAttachmentsService,
   ) {}
 
-  @Get()
+  @Get('me')
   @UseGuards(JwtAuthGuard)
+  async findAllMeSupportTickets(
+    @Query() query: FindAllSupportTicketsByCreatorDto,
+    @User() user: UserProps,
+  ) {
+    const { page, limit, filter } = query;
+
+    if (filter === 'responsible') {
+      return await this.findAllSupportTicketsByResponsibleService.execute({
+        page,
+        limit,
+        responsibleId: user.id,
+      });
+    }
+
+    return await this.findAllSupportTicketsByCreatorService.execute({
+      page,
+      limit,
+      creatorId: user.id,
+    });
+  }
+
+  @Get()
+  @UseGuards(JwtAuthGuard, PoliciesGuard)
   @CheckPolicies(RolesAction.read, RolesSubject.SUPPORT_TICKET)
   async findAllSupportTickets(@Query() query: FindAllSupportTicketsDto) {
     const { page, limit } = query;
@@ -80,35 +106,8 @@ export class SupportTicketsController {
     });
   }
 
-  @Get(':ticketId')
-  @UseGuards(JwtAuthGuard)
-  @CheckPolicies(RolesAction.read, RolesSubject.SUPPORT_TICKET)
-  async findUniqueSupportTicket(@Param('ticketId') ticketId: string) {
-    const { supportTicket } = await this.findUniqueSupportTicketService.execute(
-      ticketId,
-    );
-
-    return supportTicket;
-  }
-
-  @Get('me')
-  @UseGuards(JwtAuthGuard)
-  @CheckPolicies(RolesAction.read, RolesSubject.SUPPORT_TICKET)
-  async findAllMeSupportTickets(
-    @Query() query: FindAllSupportTicketsByCreatorDto,
-    @User() user: UserProps,
-  ) {
-    const { page, limit } = query;
-
-    return await this.findAllSupportTicketsByCreatorService.execute({
-      page,
-      limit,
-      creatorId: user.id,
-    });
-  }
-
   @Get('creator/:creatorId')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, PoliciesGuard)
   @CheckPolicies(RolesAction.read, RolesSubject.SUPPORT_TICKET)
   async findAllSupportTicketsByCreator(
     @Param('creatorId') creatorId: string,
@@ -124,7 +123,7 @@ export class SupportTicketsController {
   }
 
   @Get('responsible/:responsibleId')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, PoliciesGuard)
   @CheckPolicies(RolesAction.read, RolesSubject.SUPPORT_TICKET)
   async findAllSupportTicketsByResponsible(
     @Param('responsibleId') responsibleId: string,
@@ -140,7 +139,7 @@ export class SupportTicketsController {
   }
 
   @Get('message/:ticketId')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, PoliciesGuard)
   @CheckPolicies(RolesAction.read, RolesSubject.SUPPORT_TICKET)
   async findAllSupportTicketMessagesByTicket(
     @Param('ticketId') ticketId: string,
@@ -155,9 +154,24 @@ export class SupportTicketsController {
     });
   }
 
+  @Get(':ticketId')
+  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @CheckPolicies(RolesAction.read, RolesSubject.SUPPORT_TICKET)
+  async findUniqueSupportTicket(@Param('ticketId') ticketId: string) {
+    const { supportTicket } = await this.findUniqueSupportTicketService.execute(
+      ticketId,
+    );
+
+    if (!supportTicket) {
+      throw new BadRequestException(SUPPORT_TICKET_NOT_FOUND);
+    }
+
+    return supportTicket;
+  }
+
   @Post()
   @HttpCode(201)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, PoliciesGuard)
   @CheckPolicies(RolesAction.create, RolesSubject.SUPPORT_TICKET)
   async createSupportTicket(
     @Body() body: CreateSupportTicketDto,
@@ -172,27 +186,39 @@ export class SupportTicketsController {
       actionUser: user,
       ticketCreated: supportTicket,
     });
-
-    return supportTicket;
   }
 
   @Post('message/:ticketId')
   @HttpCode(201)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, PoliciesGuard)
   @CheckPolicies(RolesAction.create, RolesSubject.SUPPORT_TICKET)
   async createSupportTicketMessage(
     @Body() body: CreateSupportTicketMessageDto,
     @Param('ticketId') ticketId: string,
     @User() user: UserProps,
   ) {
-    const { messageSupportTicket } =
-      await this.createMessageFromSupportTicketService.execute({
-        ticketId,
-        senderId: user.id,
-        message: body.message,
-      });
+    await this.createMessageFromSupportTicketService.execute({
+      ticketId,
+      senderId: user.id,
+      message: body.message,
+    });
+  }
 
-    return messageSupportTicket;
+  @Post('message/attachment/:ticketId')
+  @HttpCode(201)
+  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @CheckPolicies(RolesAction.create, RolesSubject.SUPPORT_TICKET)
+  @MultiDocumentsUploadInterceptor()
+  async createSupportTicketMessageAttachment(
+    @MultiDocumentsUploadValidator() files: Express.Multer.File[],
+    @Param('ticketId') ticketId: string,
+    @User() user: UserProps,
+  ) {
+    await this.insertMessageAttachmentsService.execute({
+      ticketId: ticketId,
+      senderId: user.id,
+      files,
+    });
   }
 
   @Patch(':ticketId')
@@ -241,7 +267,7 @@ export class SupportTicketsController {
   }
 
   @Delete(':ticketId')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, PoliciesGuard)
   @CheckPolicies(RolesAction.delete, RolesSubject.SUPPORT_TICKET)
   async deleteUnique(
     @Param('ticketId') ticketId: string,

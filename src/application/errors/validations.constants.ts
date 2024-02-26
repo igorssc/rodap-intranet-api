@@ -6,7 +6,7 @@ export const NAME_STRING_MESSAGE = 'O nome deve ser uma string.';
 
 export const TITLE_STRING_MESSAGE = 'O título deve ser uma string.';
 
-export const DESCRIPTION_STRING_MESSAGE = 'O título deve ser uma string.';
+export const DESCRIPTION_STRING_MESSAGE = 'A descrição deve ser uma string.';
 
 export const NAME_NOT_EMPTY_MESSAGE = 'O nome não pode estar vazio.';
 
@@ -34,6 +34,9 @@ export const IS_ACTIVE_BOOLEAN_MESSAGE =
 
 export const ACTION_TYPE_VALID_MESSAGE =
   'O tipo de ação deve ser um valor válido.';
+
+export const FILTER_SUPPORT_TICKET_VALID_MESSAGE =
+  'O filtro dos tickets deve ser um valor válido.';
 
 export const SUPPORT_TICKET_PRIORITY_TYPE_VALID_MESSAGE =
   'O tipo de prioridade do ticket deve ser um valor válido.';

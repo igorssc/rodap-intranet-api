@@ -4,9 +4,11 @@ import { SupportTicket } from '@prisma/client';
 
 @Injectable()
 export class DeleteUniqueSupportTicketService {
-  constructor(private supportTicketRepository: SupportTicketsRepository) {}
+  constructor(
+    private supportTicketMessagesRepository: SupportTicketsRepository,
+  ) {}
 
   async execute(ticketId: string): Promise<SupportTicket> {
-    return await this.supportTicketRepository.deleteUnique(ticketId);
+    return await this.supportTicketMessagesRepository.deleteUnique(ticketId);
   }
 }

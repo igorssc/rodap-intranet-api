@@ -6,7 +6,7 @@
 
 */
 -- CreateEnum
-CREATE TYPE "SupportTicketStatus" AS ENUM ('OPEN', 'CLOSED', 'PROGRESS');
+CREATE TYPE "SupportTicketStatus" AS ENUM ('OPEN', 'CLOSED', 'PROGRESS', 'RESOLVED');
 
 -- CreateEnum
 CREATE TYPE "SupportTicketPriority" AS ENUM ('LOW', 'MEDIUM', 'HIGH', 'URGENT');

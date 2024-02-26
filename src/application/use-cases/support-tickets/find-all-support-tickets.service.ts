@@ -11,7 +11,9 @@ interface FindAllSupportTicketsServiceExecuteProps {
 
 @Injectable()
 export class FindAllSupportTicketsService {
-  constructor(private supportTicketRepository: SupportTicketsRepository) {}
+  constructor(
+    private supportTicketMessagesRepository: SupportTicketsRepository,
+  ) {}
 
   async execute({
     limit = 10,
@@ -19,12 +21,12 @@ export class FindAllSupportTicketsService {
   }: FindAllSupportTicketsServiceExecuteProps = {}): Promise<
     PaginatedData<SupportTicket>
   > {
-    const data = await this.supportTicketRepository.findAll({
+    const data = await this.supportTicketMessagesRepository.findAll({
       page,
       pageSize: limit,
     });
 
-    const totalCount = await this.supportTicketRepository.totalCount();
+    const totalCount = await this.supportTicketMessagesRepository.totalCount();
 
     const dataPaginated = pagination({
       data,

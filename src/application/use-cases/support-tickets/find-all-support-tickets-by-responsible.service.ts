@@ -10,22 +10,26 @@ interface FindAllSupportTicketsByResponsibleServiceExecuteProps {
 
 @Injectable()
 export class FindAllSupportTicketsByResponsibleService {
-  constructor(private supportTicketRepository: SupportTicketsRepository) {}
+  constructor(
+    private supportTicketMessagesRepository: SupportTicketsRepository,
+  ) {}
 
   async execute({
     responsibleId,
     page = 1,
     limit = 10,
   }: FindAllSupportTicketsByResponsibleServiceExecuteProps) {
-    const data = await this.supportTicketRepository.findAllByResponsibleUser({
-      page,
-      pageSize: limit,
-      responsibleId,
-    });
+    const data =
+      await this.supportTicketMessagesRepository.findAllByResponsibleUser({
+        page,
+        pageSize: limit,
+        responsibleId,
+      });
 
-    const totalCount = await this.supportTicketRepository.totalResponsibleCount(
-      responsibleId,
-    );
+    const totalCount =
+      await this.supportTicketMessagesRepository.totalResponsibleCount(
+        responsibleId,
+      );
 
     const dataPaginated = pagination({
       data,

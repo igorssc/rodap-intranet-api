@@ -26,6 +26,7 @@ export class PrismaSupportTicketMessagesRepository
       where: { ticket_id: ticketId },
       skip: (page - 1) * pageSize,
       take: pageSize,
+      include: { sender: { select: { id: true, name: true } } },
     });
 
     return data;

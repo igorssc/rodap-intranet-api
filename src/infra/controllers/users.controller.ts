@@ -34,9 +34,9 @@ import { UpdateUserLogService } from '@/application/use-cases/action-logs/user/u
 import { PrismaService } from '@/application/providers/prisma/prisma.service';
 import { DeleteUserLogService } from '@/application/use-cases/action-logs/user/delete-user-logs.service';
 import { UpdateMeUserDto } from '../dtos/users/update-me-user.dto';
-import { PictureUploadInterceptor } from '../decorators/picture-upload-interceptor.decorator';
+import { PictureUploadInterceptor } from '../decorators/documents/picture-upload-interceptor.decorator';
 import { UpdateMeLogService } from '@/application/use-cases/action-logs/user/update-me-logs.service';
-import { PictureUploadValidator } from '../decorators/picture-upload-validator.decorator';
+import { PictureUploadValidator } from '../decorators/documents/picture-upload-validator.decorator';
 import { UploadProfilePictureService } from '@/application/use-cases/files/user/upload-profile-picture.service';
 import { DeleteProfilePictureService } from '@/application/use-cases/files/user/delete-profile-picture.service';
 
@@ -100,14 +100,10 @@ export class UsersController {
   async createUser(@Body() body: CreateUserDto, @User() user: UserProps) {
     const { user: userCreated } = await this.createUserService.execute(body);
 
-    const userExposed = this.prismaService.expose(userCreated);
-
     await this.createUserLogService.execute({
       actionUser: user,
       userCreated,
     });
-
-    return userExposed;
   }
 
   @Patch('profile-picture')

@@ -10,7 +10,7 @@ interface FindAllMessagesByTicketServiceExecuteProps {
 @Injectable()
 export class FindAllMessagesBySupportTicketService {
   constructor(
-    private supportTicketMessageRepository: SupportTicketMessagesRepository,
+    private supportTicketMessagesRepository: SupportTicketMessagesRepository,
   ) {}
 
   async execute({
@@ -18,7 +18,7 @@ export class FindAllMessagesBySupportTicketService {
     page = 1,
     limit = 30,
   }: FindAllMessagesByTicketServiceExecuteProps) {
-    const data = await this.supportTicketMessageRepository.findAllByTicket({
+    const data = await this.supportTicketMessagesRepository.findAllByTicket({
       page,
       pageSize: limit,
       ticketId,

@@ -26,7 +26,6 @@ CREATE TABLE "support_tickets" (
     "ticket_number" SERIAL NOT NULL,
     "title" TEXT NOT NULL,
     "description" TEXT,
-    "attachment" TEXT,
     "status" "TicketStatus" NOT NULL DEFAULT 'OPEN',
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "creator_id" TEXT NOT NULL,
@@ -38,7 +37,7 @@ CREATE TABLE "support_tickets" (
 -- CreateTable
 CREATE TABLE "support_ticket_messages" (
     "id" TEXT NOT NULL,
-    "message" TEXT NOT NULL,
+    "message" TEXT,
     "attachment" TEXT,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "sender_id" TEXT NOT NULL,
