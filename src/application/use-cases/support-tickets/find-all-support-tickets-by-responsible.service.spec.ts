@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { SupportTicketsRepository } from '@/application/repositories/support-tickets.repository';
-import { InMemorySupportTicketsRepository } from '@/application/repositories/implementations/in-memory-support-tickets.repository';
+import { InMemorySupportTicketsRepository } from '@/application/repositories/implementations/in-memory/in-memory-support-tickets.repository';
 import { randomUUID } from 'crypto';
 import { FindAllSupportTicketsByResponsibleService } from './find-all-support-tickets-by-responsible.service';
 

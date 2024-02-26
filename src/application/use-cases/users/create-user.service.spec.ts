@@ -1,4 +1,4 @@
-import { InMemoryUsersRepository } from '@/application/repositories/implementations/in-memory-users.repository';
+import { InMemoryUsersRepository } from '@/application/repositories/implementations/in-memory/in-memory-users.repository';
 import { UsersRepository } from '@/application/repositories/users.repository';
 import { ConflictException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';

@@ -1,4 +1,4 @@
-import { PrismaSupportTicketsRepository } from '@/application/repositories/implementations/prisma-support-ticket.repository';
+import { PrismaSupportTicketsRepository } from '@/application/repositories/implementations/prisma/prisma-support-ticket.repository';
 import { SupportTicketsRepository } from '@/application/repositories/support-tickets.repository';
 import { Module } from '@nestjs/common';
 import { CreateSupportTicketService } from './create-support-ticket.service';

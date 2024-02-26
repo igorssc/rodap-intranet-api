@@ -1,16 +1,13 @@
-import { Injectable } from '@nestjs/common';
 import { PutObjectCommandInput } from '@aws-sdk/client-s3';
-import { AvailableFormatInfo, FormatEnum } from 'sharp';
 import s3 from '@/infra/config/aws';
 import { generateUrlFromS3FileName } from '@/application/utils/generate-url-from-s3-file-name';
 
 interface UploadUniqueFileToS3ServiceExecuteProps {
   fileName: string;
   buffer: Buffer;
-  mimetype: AvailableFormatInfo | keyof FormatEnum;
+  mimetype: string;
 }
 
-@Injectable()
 export class UploadUniqueFileToS3Service {
   async execute(data: UploadUniqueFileToS3ServiceExecuteProps) {
     return new Promise<string>((resolve, reject) => {

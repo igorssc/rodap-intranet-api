@@ -3,6 +3,7 @@ import { CompressPictureService } from '../compress-picture.service';
 import { UploadUniqueFileToS3Service } from '../upload-unique-file-to-s3.service';
 import * as fs from 'node:fs';
 import { SupportTicketMessagesRepository } from '@/application/repositories/support-ticket-messages.repository';
+import { getExtensionFromFileName } from '@/application/utils/get-extension-from-file-name';
 
 interface InsertMessageAttachmentsServiceExecuteProps {
   ticketId: string;
@@ -24,19 +25,48 @@ export class InsertMessageAttachmentsService {
     ticketId,
   }: InsertMessageAttachmentsServiceExecuteProps) {
     const attachmentsPromises = files.map(async (file) => {
-      const fileCompressed = await this.compressPictureService.execute({
-        fileName: file.filename,
-        mimetype: 'webp',
-        path: file.path,
-        size: 500,
-        quality: 50,
-      });
+      const imageMimeTypes = ['image/jpeg', 'image/png', 'image/webp'];
 
-      const fileNameUploaded = await this.uploadUniqueFileToS3Service.execute({
-        fileName: 'support-ticket/' + fileCompressed.fileName,
-        mimetype: fileCompressed.mimetype,
-        buffer: fileCompressed.buffer,
-      });
+      const isDocumentAnImage = imageMimeTypes.some(
+        (mime) => mime === file.mimetype,
+      );
+
+      let fileNameUploaded: string;
+
+      if (isDocumentAnImage) {
+        const mimetype = 'webp';
+
+        const newName = file.filename.split('.')[0] + '.' + mimetype;
+
+        const fileCompressed = await this.compressPictureService.execute({
+          mimetype: mimetype,
+          path: file.path,
+          size: 800,
+          quality: 60,
+        });
+
+        const fileBuffer = fileCompressed.buffer;
+
+        fileNameUploaded = await this.uploadUniqueFileToS3Service.execute({
+          fileName: 'support-ticket/' + newName,
+          mimetype,
+          buffer: fileBuffer,
+        });
+      }
+
+      if (!isDocumentAnImage) {
+        const extension = getExtensionFromFileName(file.originalname);
+
+        const newName = file.filename.split('.')[0] + '.' + extension;
+
+        const fileBuffer = await fs.promises.readFile(file.path);
+
+        fileNameUploaded = await this.uploadUniqueFileToS3Service.execute({
+          fileName: 'support-ticket/' + newName,
+          mimetype: file.mimetype,
+          buffer: fileBuffer,
+        });
+      }
 
       fs.unlink(file.path, (err) => {
         if (err) console.error(err);

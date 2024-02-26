@@ -2,7 +2,7 @@ import { Module, forwardRef } from '@nestjs/common';
 import { UsersModule } from '../users/users.module';
 import { CreateActionLogService } from './create-action-logs.service';
 import { ActionLogsRepository } from '@/application/repositories/action-logs.repository';
-import { PrismaActionLogsRepository } from '@/application/repositories/implementations/prisma-action-logs.repository';
+import { PrismaActionLogsRepository } from '@/application/repositories/implementations/prisma/prisma-action-logs.repository';
 import { PrismaService } from '@/application/providers/prisma/prisma.service';
 import { UpdateUserLogService } from './user/update-user-logs.service';
 import { CreateUserLogService } from './user/create-user-logs.service';
